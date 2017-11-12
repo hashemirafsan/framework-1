@@ -1,16 +1,16 @@
 <?php
 
 return array(
-	'plugin_name' => 'The Glue',
-	'plugin_slug' => 'glue',
-	'plugin_uri' => 'http://glue.com',
-	'plugin_version' => '1.0.0',
-	'author_name' => 'Sheikh Heera',
-	'author_email' => 'heera.sheikh77@gmail.com',
-	'author_uri' => 'http://heera.it',
+	'plugin_name' => '',
+	'plugin_slug' => '',
+	'plugin_uri' => '',
+	'plugin_version' => '',
+	'author_name' => '',
+	'author_email' => '',
+	'author_uri' => '',
 
 	'autoload' => array(
-		'namespace' => 'Glue',
+		'namespace' => 'namespace',
 		'mapping' => array(
 			'App' => 'app',
 			'Plugin' => 'plugin'
