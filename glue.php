@@ -15,7 +15,6 @@ Text Domain: glue
 */
 
 
-
 include "app/Foundation/Bootstrap.php";
-
-\Glue\App\Foundation\Bootstrap::boot(__FILE__);
+use Glue\App\Foundation\Bootstrap;
+Bootstrap::boot(__FILE__);
