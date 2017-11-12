@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use Glue\App\Foundation\BaseAlias;
+
+class DummyClass extends BaseAlias
+{
+	static $key = 'DummyKey';
+}
