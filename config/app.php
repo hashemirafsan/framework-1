@@ -10,7 +10,7 @@ return array(
 	'author_uri' => '',
 
 	'autoload' => array(
-		'namespace' => 'namespace',
+		'namespace' => 'Glue',
 		'mapping' => array(
 			'App' => 'app',
 			'Plugin' => 'plugin'
