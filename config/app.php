@@ -14,7 +14,6 @@ return array(
 		'plugin' => array(
 			'common' => array(
 				GlueNamespace\App\Providers\CommonProvider::class,
-				GlueNamespace\App\Providers\FormBuilderProvider::class,
 			),
 
 			'backend' => array(
