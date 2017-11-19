@@ -1,2 +1,2 @@
-# framework
-A light weight plugin framework for WordPress
+# WPGlue
+A light weight plugin framework for WordPress.
