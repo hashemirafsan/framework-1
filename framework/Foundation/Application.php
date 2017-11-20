@@ -191,7 +191,7 @@ class Application extends Container
 	 * Get engine/core providers
 	 * @return array
 	 */
-	protected function getEngineProviders()
+	public function getEngineProviders()
 	{
 		return $this->getProviders('core');
 	}
@@ -209,8 +209,8 @@ class Application extends Container
 	 * Get plugin providers (Backend|Frontend)
 	 * @return array
 	 */
-	protected function getPluginProviders()
-	{	
+	public function getPluginProviders()
+	{
         if ($this->isUserOnAdminArea()) {
             return $this->getProviders('plugin')['backend'];
         } else {
