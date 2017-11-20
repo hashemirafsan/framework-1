@@ -84,8 +84,10 @@ class Application extends Container
 		$this->setAppBaseBindings();
 		$this->setExceptionHandler();
 		$this->loadApplicationTextDomain();
+
 		$this->bootstrapWith($this->getEngineProviders());
 		$this->fireCallbacks($this->engineBootedCallbacks);
+		
 		$this->bootstrapWith($this->getPluginProviders());
 		$this->fireCallbacks($this->pluginReadyCallbacks);
 	}
@@ -197,20 +199,25 @@ class Application extends Container
 	}
 
 	/**
-	 * Get plugin providers
+	 * Get plugin providers (Common)
+	 * @return array
+	 */
+	public function getCommonProviders()
+	{
+		return $this->getProviders('plugin')['common'];
+	}
+
+	/**
+	 * Get plugin providers (Backend|Frontend)
 	 * @return array
 	 */
 	protected function getPluginProviders()
-	{
-		$providers = $this->getProviders('plugin');
-		
-        if (!$this->isUserOnAdminArea()) {
-            unset($providers['backend']);
+	{	
+        if ($this->isUserOnAdminArea()) {
+            return $this->getProviders('plugin')['backend'];
         } else {
-            unset($providers['frontend']);
+            return $this->getProviders('plugin')['frontend'];
         }
-
-        return call_user_func_array('array_merge', $providers);
 	}
 
     /**

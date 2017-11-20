@@ -25,6 +25,6 @@ class BackendProvider extends Provider
      */
 	public function booted()
     {
-        $this->app->load($this->app->appPath('Hooks/Backend.php'));
+        // ...
     }
 }

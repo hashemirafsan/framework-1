@@ -25,6 +25,6 @@ class CommonProvider extends Provider
      */
 	public function booted()
     {
-        $this->app->load($this->app->appPath('Hooks/Common.php'));
+        // ...
     }
 }
