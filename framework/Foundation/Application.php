@@ -84,10 +84,8 @@ class Application extends Container
 		$this->setAppBaseBindings();
 		$this->setExceptionHandler();
 		$this->loadApplicationTextDomain();
-
 		$this->bootstrapWith($this->getEngineProviders());
 		$this->fireCallbacks($this->engineBootedCallbacks);
-		
 		$this->bootstrapWith($this->getPluginProviders());
 		$this->fireCallbacks($this->pluginReadyCallbacks);
 	}
@@ -171,7 +169,7 @@ class Application extends Container
 	 * @param  array $providers
 	 * @return void
 	 */
-	protected function bootstrapWith(array $providers)
+	public function bootstrapWith(array $providers)
 	{
 		$instances = [];
 

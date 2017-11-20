@@ -2,16 +2,18 @@
 
 namespace GlueNamespace\Framework\Foundation;
 
-class AppProvider
+use GlueNamespace\Framework\Foundation\Provider;
+
+class AppProvider extends Provider
 {
     /**
      * The provider booting method to boot this provider
      * @param  GlueNamespace\Framework\Foundation\Application $app
      * @return void
      */
-	public function booting(Application $app)
+    public function booting()
     {
-        $app->bind('app', $app, 'App', Application::class);
+        $this->app->bind('app', $this->app, 'App', Application::class);
     }
 
     /**
@@ -19,16 +21,16 @@ class AppProvider
      * @param  GlueNamespace\Framework\Foundation\Application $app
      * @return void
      */
-	public function booted(Application $app)
+    public function booted()
     {
         // Framework is booted and ready
-    	$app->booted(function($app) {
+        $this->app->booted(function($app) {
             $app->load($app->appPath('Global/Common.php'));
             $app->bootstrapWith($app->getCommonProviders());
         });
 
         // Application is booted and ready
-        $app->ready(function($app) {
+        $this->app->ready(function($app) {
             $app->load($app->appPath('Hooks/Common.php'));
             if ($app->isUserOnAdminArea()) {
                 $app->load($app->appPath('Hooks/Backend.php'));
