@@ -94,9 +94,11 @@ class Container implements ArrayAccess
      * @param  string $alias
      * @return string
      */
-    public function alias($key, $alias)
+    public function alias($key, $aliases)
     {
-        static::$container['aliases'][$alias] = $key;
+        foreach ((array) $aliases as $alias) {
+            static::$container['aliases'][$alias] = $key;
+        }
     }
 
     /**

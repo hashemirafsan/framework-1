@@ -14,6 +14,6 @@ class RequestProvider extends Provider
 	{
 		$this->app->bindSingleton('request', function($app) {
 			return new Request($app, $_GET, $_POST);
-		}, 'Request');
+		}, 'Request', Request::class);
 	}
 }

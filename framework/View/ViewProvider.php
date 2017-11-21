@@ -13,6 +13,6 @@ class ViewProvider extends Provider
 	{
 		$this->app->bind('view', function($app) {
 			return new View($app);
-		}, 'View');
+		}, 'View', View::class);
 	}
 }
