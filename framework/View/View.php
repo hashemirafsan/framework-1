@@ -24,4 +24,9 @@ class View
 
 		throw new \InvalidArgumentException("The view file [$file] doesn't exists!");
 	}
+
+	public function render($path, $data = [])
+	{
+		echo $this->make($path, $data);
+	}
 }
