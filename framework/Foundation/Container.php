@@ -127,6 +127,10 @@ class Container implements ArrayAccess
             return $this->resolve(static::$container['bindings'][$key]);
         }
 
+        if (class_exists($key)) {
+            return new $key;
+        }
+
         $this->cantResolveComponent($key);
     }
 
@@ -185,7 +189,7 @@ class Container implements ArrayAccess
     protected function cantResolveComponent($key)
     {
     	throw new UnResolveableEntityException(
-            'No component is registered with id/key ['.$key.'] in the '.__CLASS__.'.'
+            'The service ['.$key.'] doesn\'t exist in the container.'
         );
     }
 
