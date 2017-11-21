@@ -4,6 +4,7 @@ namespace GlueNamespace\Framework\Foundation;
 
 use Closure;
 use ArrayAccess;
+use ReflectionClass;
 use GlueNamespace\Framework\Exception\UnResolveableEntityException;
 
 class Container implements ArrayAccess
@@ -107,7 +108,7 @@ class Container implements ArrayAccess
      * @return mixed
      * @throws \GlueNamespace\Framework\Exception\UnResolveableEntityException
      */
-    public function make($key = null)
+    public function make($key = null, array $params = [])
     {
         if (!$key) {
             return AppFacade::getApplication();
@@ -130,7 +131,10 @@ class Container implements ArrayAccess
         }
 
         if (class_exists($key)) {
-            return new $key;
+            if (!$params) {
+                return new $key;
+            }
+            return (new ReflectionClass($key))->newInstanceArgs($params);
         }
 
         $this->cantResolveComponent($key);
