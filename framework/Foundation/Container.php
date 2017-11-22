@@ -9,13 +9,7 @@ use ReflectionParameter;
 use GlueNamespace\Framework\Exception\UnResolveableEntityException;
 
 class Container implements ArrayAccess
-{
-    /**
-     * Store current build/class (which is being resolved)
-     * @var array
-     */
-    protected $currentBuildStack = [];
-    
+{   
     /**
      * $container The service container
      * @var array
@@ -157,10 +151,7 @@ class Container implements ArrayAccess
             return $this->cantResolveComponent($key);
         }
 
-        $this->currentBuildStack[] = $key;
-
         if (!$constructor = $reflector->getConstructor()) {
-            array_pop($this->currentBuildStack);
             return new $key;
         }
 
@@ -181,7 +172,6 @@ class Container implements ArrayAccess
         $results = [];
         foreach ($dependencies as $dependency) {
             $results[] = $this->resolveClass($dependency);
-            array_pop($this->currentBuildStack);
         }
         return $results;
     }
