@@ -8,10 +8,10 @@ trait HelpersTrait
      * Load a file using include_once
      * @return boolean
      */
-    public function load($file, $ext = '.php')
+    public function load($file)
     {
-        $fn = function($app) use ($file, $ext) {
-            return include_once $file.$ext;
+        $fn = function($app) use ($file) {
+            return include_once $file;
         };
         return $fn($this);
     }

@@ -2,8 +2,6 @@
 
 namespace GlueNamespace\App\Modules;
 
-use GlueNamespace\App\Databases\DatabaseMigrator;
-
 class Activator
 {
 	/**
