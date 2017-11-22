@@ -5,10 +5,17 @@ namespace GlueNamespace\Framework\Foundation;
 use Closure;
 use ArrayAccess;
 use ReflectionClass;
+use ReflectionParameter;
 use GlueNamespace\Framework\Exception\UnResolveableEntityException;
 
 class Container implements ArrayAccess
 {
+    /**
+     * Store current build/class (which is being resolved)
+     * @var array
+     */
+    protected $currentBuildStack = [];
+    
     /**
      * $container The service container
      * @var array
@@ -106,7 +113,7 @@ class Container implements ArrayAccess
      * Resolve an instance from container
      * @param  string $key
      * @return mixed
-     * @throws \GlueNamespace\Framework\Exception\UnResolveableEntityException
+     * @throws \NewPluginTest\Framework\Exception\UnResolveableEntityException
      */
     public function make($key = null, array $params = [])
     {
@@ -131,13 +138,71 @@ class Container implements ArrayAccess
         }
 
         if (class_exists($key)) {
-            if (!$params) {
-                return new $key;
-            }
-            return (new ReflectionClass($key))->newInstanceArgs($params);
+            return $this->build($key);
         }
 
         $this->cantResolveComponent($key);
+    }
+
+    /**
+     * Build a concrete class with all dependencies
+     * @param string $key FQN class name
+     * @return mixed resolved instance
+     */
+    public function build($key)
+    {
+        $reflector = new ReflectionClass($key);
+
+        if (!$reflector->isInstantiable()) {
+            return $this->cantResolveComponent($key);
+        }
+
+        $this->currentBuildStack[] = $key;
+
+        if (!$constructor = $reflector->getConstructor()) {
+            array_pop($this->currentBuildStack);
+            return new $key;
+        }
+
+        $dependencies = $this->resolveDependencies(
+            $constructor->getParameters()
+        );
+
+        return $reflector->newInstanceArgs($dependencies);
+    }
+
+    /**
+     * Resolve all dependencies of a single class
+     * @param  array $dependencies Constructor Parameters
+     * @return array An array of all the resolved dependencies of one class
+     */
+    protected function resolveDependencies(array $dependencies)
+    {
+        $results = [];
+        foreach ($dependencies as $dependency) {
+            $results[] = $this->resolveClass($dependency);
+            array_pop($this->currentBuildStack);
+        }
+        return $results;
+    }
+
+    /**
+     * Resolves a single class instance
+     * @param  ReflectionParameter $parameter
+     * @return mixed
+     * @throws Exception
+     */
+    protected function resolveClass(ReflectionParameter $parameter)
+    {
+        try {
+            return $this->make($parameter->getClass()->name);
+        }
+        catch (\Exception $exception) {
+            if ($parameter->isOptional()) {
+                return $parameter->getDefaultValue();
+            }
+            throw $exception;
+        }
     }
 
     /**
