@@ -25,17 +25,17 @@ class AppProvider extends Provider
     {
         // Framework is booted and ready
         $this->app->booted(function($app) {
-            $app->load($app->appPath('Global/Common.php'));
+            $app->load($app->appPath('Global/Common'));
             $app->bootstrapWith($app->getCommonProviders());
         });
 
         // Application is booted and ready
         $this->app->ready(function($app) {
-            $app->load($app->appPath('Hooks/Common.php'));
+            $app->load($app->appPath('Hooks/Common'));
             if ($app->isUserOnAdminArea()) {
-                $app->load($app->appPath('Hooks/Backend.php'));
+                $app->load($app->appPath('Hooks/Backend'));
             } else {
-                $app->load($app->appPath('Hooks/Frontend.php'));   
+                $app->load($app->appPath('Hooks/Frontend'));   
             }
         });
     }
