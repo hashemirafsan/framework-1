@@ -40,7 +40,7 @@ trait HelpersTrait
         } elseif (is_string($args[0])) {
             if (strpos($args[0], '@')) {
                 list($class, $method) = explode('@', $args[0]);
-                $instance = new $class;
+                $instance = $this->make($class);
                 return [$instance, $method];
             } elseif (strpos($args[0], '::')) {
                 list($class, $method) = explode('::', $args[0]);
