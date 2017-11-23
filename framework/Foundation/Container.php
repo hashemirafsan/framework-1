@@ -3,6 +3,7 @@
 namespace GlueNamespace\Framework\Foundation;
 
 use Closure;
+use Exception;
 use ArrayAccess;
 use ReflectionClass;
 use ReflectionParameter;
@@ -30,9 +31,15 @@ class Container implements ArrayAccess
      * @param  string $alias [optional alias]
      * @return void
      */
-    public function bind($key, $concrete, $facade = null, $alias = null)
+    public function bind($key, $concrete = null, $facade = null, $alias = null, $shared = false)
     {
-        static::$container['bindings'][$key] = $concrete;
+        $concrete = is_null($concrete) ? $key : $concrete;
+
+        if (!$shared) {
+            static::$container['bindings'][$key] = $concrete;
+        } else {
+            static::$container['singletons'][$key] = $concrete;
+        }
 
         if ($facade) {
             $this->facade($key, $facade);
@@ -51,17 +58,10 @@ class Container implements ArrayAccess
      * @param  string $alias [optional alias]
      * @return void
      */
-    public function bindSingleton($key, $concrete, $facade = null, $alias = null)
+    public function bindSingleton($key, $concrete = null, $facade = null, $alias = null)
     {
-        static::$container['singletons'][$key] = $concrete;
-
-        if ($facade) {
-            $this->facade($key, $facade);
-        }
-
-        if ($alias) {
-            $this->alias($key, $alias);
-        }
+        $concrete = is_null($concrete) ? $key : $concrete;
+        $this->bind($key, $concrete, $facade, $alias, true);
     }
 
     /**
@@ -74,9 +74,9 @@ class Container implements ArrayAccess
      */
     public function bindInstance($key, $concrete, $facade = null, $alias = null)
     {
-        $this->bindSingleton($key, function() use ($concrete) {
+        $this->bind($key, function($app) use ($concrete) {
             return $concrete;
-        }, $facade, $alias);
+        }, $facade, $alias, true);
     }
 
     /**
@@ -111,7 +111,7 @@ class Container implements ArrayAccess
      */
     public function make($key = null, array $params = [])
     {
-        if (!$key) {
+        if (is_null($key)) {
             return AppFacade::getApplication();
         }
 
@@ -131,11 +131,25 @@ class Container implements ArrayAccess
             return $this->resolve(static::$container['bindings'][$key]);
         }
 
-        if (class_exists($key)) {
-            return $this->build($key);
+        if (is_string($key) && class_exists($key)) {
+            return $this->resolve($key);
         }
 
         $this->cantResolveComponent($key);
+    }
+
+    /**
+     * Resolve an item from the container
+     * @param  mixed $value
+     * @return mixed
+     */
+    protected function resolve($value)
+    {
+        try {
+            return $value instanceof Closure ? $value($this) : $this->build($value);
+        } catch(Exception $exception) {
+            return $value;
+        }
     }
 
     /**
@@ -187,7 +201,7 @@ class Container implements ArrayAccess
         try {
             return $this->make($parameter->getClass()->name);
         }
-        catch (\Exception $exception) {
+        catch (Exception $exception) {
             if ($parameter->isOptional()) {
                 return $parameter->getDefaultValue();
             }
@@ -207,16 +221,6 @@ class Container implements ArrayAccess
         }
 
         return $key;
-    }
-
-    /**
-     * Resolve an item from the container
-     * @param  mixed $value
-     * @return mixed
-     */
-    protected function resolve($value)
-    {
-        return $value instanceof Closure ? $value($this) : $value;
     }
 
     /**
@@ -249,7 +253,7 @@ class Container implements ArrayAccess
      */
     protected function cantResolveComponent($key)
     {
-    	throw new UnResolveableEntityException(
+        throw new UnResolveableEntityException(
             'The service ['.$key.'] doesn\'t exist in the container.'
         );
     }
@@ -304,3 +308,4 @@ class Container implements ArrayAccess
         );
     }
 }
+
