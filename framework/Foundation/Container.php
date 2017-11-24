@@ -107,7 +107,7 @@ class Container implements ArrayAccess
      * Resolve an instance from container
      * @param  string $key
      * @return mixed
-     * @throws \NewPluginTest\Framework\Exception\UnResolveableEntityException
+     * @throws GlueNamespace\Framework\Exception\UnResolveableEntityException
      */
     public function make($key = null, array $params = [])
     {
@@ -147,6 +147,8 @@ class Container implements ArrayAccess
     {
         try {
             return $value instanceof Closure ? $value($this) : $this->build($value);
+        } catch(UnResolveableEntityException $exception) {
+            throw new UnResolveableEntityException("The [$value] is not instantiable.");
         } catch(Exception $exception) {
             return $value;
         }
@@ -308,4 +310,3 @@ class Container implements ArrayAccess
         );
     }
 }
-
