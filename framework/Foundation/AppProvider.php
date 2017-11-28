@@ -22,9 +22,10 @@ class AppProvider extends Provider
      * @return void
      */
     public function booted()
-    {
+    {   
         // Framework is booted and ready
         $this->app->booted(function($app) {
+            $this->registerGlobalAliasForApp();
             $app->load($app->appPath('Global/Common.php'));
             $app->bootstrapWith($app->getCommonProviders());
         });
@@ -37,6 +38,17 @@ class AppProvider extends Provider
             } else {
                 $app->load($app->appPath('Hooks/Frontend.php'));   
             }
+            $app->load($app->appPath('Hooks/Ajax.php'));
         });
+    }
+
+    /**
+     * Register a global class alias for App Facade
+     * @return bool
+     */
+    protected function registerGlobalAliasForApp()
+    {
+        $ns = $this->app->getNamespace();
+        return class_alias($ns.'\App', $ns);
     }
 }

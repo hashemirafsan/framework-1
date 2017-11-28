@@ -1,5 +1,5 @@
 <?php
 
 /**
- * Declare common actions/filters/ajax
+ * Declare common actions/filters/shortcodes
  */

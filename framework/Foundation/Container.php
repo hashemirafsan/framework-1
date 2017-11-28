@@ -10,7 +10,7 @@ use ReflectionParameter;
 use GlueNamespace\Framework\Exception\UnResolveableEntityException;
 
 class Container implements ArrayAccess
-{   
+{
     /**
      * $container The service container
      * @var array
@@ -18,9 +18,9 @@ class Container implements ArrayAccess
     protected static $container = array(
         'facades' => array(),
         'aliases' => array(),
+        'resolved' => array(),
         'bindings' => array(),
         'singletons' => array(),
-        'resolved' => array(),
     );
 
     /**
@@ -60,7 +60,6 @@ class Container implements ArrayAccess
      */
     public function bindSingleton($key, $concrete = null, $facade = null, $alias = null)
     {
-        $concrete = is_null($concrete) ? $key : $concrete;
         $this->bind($key, $concrete, $facade, $alias, true);
     }
 
@@ -131,11 +130,13 @@ class Container implements ArrayAccess
             return $this->resolve(static::$container['bindings'][$key]);
         }
 
-        if (is_string($key) && class_exists($key)) {
+        if ($this->classExists($key)) {
             return $this->resolve($key);
         }
 
-        $this->cantResolveComponent($key);
+        throw new UnResolveableEntityException(
+            'The service ['.$key.'] doesn\'t exist.'
+        );
     }
 
     /**
@@ -145,30 +146,28 @@ class Container implements ArrayAccess
      */
     protected function resolve($value)
     {
-        try {
-            return $value instanceof Closure ? $value($this) : $this->build($value);
-        } catch(UnResolveableEntityException $exception) {
-            throw new UnResolveableEntityException("The [$value] is not instantiable.");
-        } catch(Exception $exception) {
-            return $value;
-        }
+        return $value instanceof Closure ? $value($this) : $this->build($value);
     }
 
     /**
      * Build a concrete class with all dependencies
-     * @param string $key FQN class name
+     * @param string $value FQN class name
      * @return mixed resolved instance
      */
-    public function build($key)
+    protected function build($value)
     {
-        $reflector = new ReflectionClass($key);
+        if (is_object($value)) return $value;
+
+        $reflector = new ReflectionClass($value);
 
         if (!$reflector->isInstantiable()) {
-            return $this->cantResolveComponent($key);
+            throw new UnResolveableEntityException(
+                "The [$value] is not instantiable."
+            );
         }
 
         if (!$constructor = $reflector->getConstructor()) {
-            return new $key;
+            return new $value;
         }
 
         $dependencies = $this->resolveDependencies(
@@ -206,6 +205,12 @@ class Container implements ArrayAccess
         catch (Exception $exception) {
             if ($parameter->isOptional()) {
                 return $parameter->getDefaultValue();
+            } elseif (!$parameter->getClass()) {
+                $name = $parameter->getName();
+                $cls = $parameter->getDeclaringClass();
+                throw new UnResolveableEntityException(
+                    "The [".$cls->name."] is not instantiable, $".$name." is required."
+                );
             }
             throw $exception;
         }
@@ -223,6 +228,16 @@ class Container implements ArrayAccess
         }
 
         return $key;
+    }
+
+    /**
+     * Check if a given class/interface exists
+     * @param  string $key
+     * @return bool
+     */
+    protected function classExists($key)
+    {
+        return is_string($key) && (class_exists($key) || interface_exists($key));
     }
 
     /**
@@ -245,19 +260,6 @@ class Container implements ArrayAccess
     public function has($offset)
     {
         return $this->bound($offset);
-    }
-
-    /**
-     * Throws exception if $this->make() can't
-     * resolve anything from the container.
-     * @param  string $key
-     * @throws use GlueNamespace\Framework\Exception\UnResolveableEntityException
-     */
-    protected function cantResolveComponent($key)
-    {
-        throw new UnResolveableEntityException(
-            'The service ['.$key.'] doesn\'t exist in the container.'
-        );
     }
 
     /**
@@ -304,9 +306,7 @@ class Container implements ArrayAccess
         unset(
             static::$container['resolved'][$offset],
             static::$container['bindings'][$offset],
-            static::$container['singletons'][$offset],
-            static::$container['aliases'][$offset],
-            static::$container['facades'][$offset]
+            static::$container['singletons'][$offset]
         );
     }
 }

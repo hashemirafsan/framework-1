@@ -1,5 +1,5 @@
 <?php
 
 /**
- * Declare backend actions/filters/ajax
+ * Declare backend actions/filters/shortcodes
  */
