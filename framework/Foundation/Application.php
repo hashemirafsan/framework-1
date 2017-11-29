@@ -1,12 +1,12 @@
 <?php
 
 /**
- * This file is part of the GlueNamespace WordPress plugin framework.
+ * This file is part of the Glue WordPress plugin framework.
  *
- * @package   GlueNamespace
- * @link      https://github.com/GlueNamespace
+ * @package   Glue
+ * @link      https://github.com/wpglue
  * @author    Sheikh Heera <heera.sheikh77@gmail.com>
- * @license   https://github.com/GlueNamespace/framework/blob/master/LICENSE GNU General Public License 3
+ * @license   https://github.com/wpglue/framework/blob/master/LICENSE GNU General Public License 3
  */
 
 namespace GlueNamespace\Framework\Foundation;
@@ -148,7 +148,7 @@ class Application extends Container
 	 */
 	protected function setExceptionHandler()
 	{
-		if (WP_DEBUG && $this->getEnv() == 'dev') {
+		if (defined('WP_DEBUG') && WP_DEBUG && $this->getEnv() == 'dev') {
 			return new ExceptionHandler($this);
 		}
 	}
@@ -175,7 +175,7 @@ class Application extends Container
 
 		foreach ($providers as $provider) {
 			$instances[] = $instance = new $provider($this);
-			$instance->booting($this);
+			$instance->booting();
 		}
 
 		if (!$this->isFacadeLoaderRegistered) {
@@ -183,7 +183,7 @@ class Application extends Container
 		}
 
 		foreach ($instances as $object) {
-			$object->booted($this);
+			$object->booted();
 		}
 	}
 
