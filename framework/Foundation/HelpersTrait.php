@@ -11,7 +11,7 @@ trait HelpersTrait
     public function load($file)
     {
         $app = $this;
-        include_once $file;
+        return include_once $file;
     }
 
 	/**
