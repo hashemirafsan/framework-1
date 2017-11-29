@@ -6,7 +6,7 @@
  * @package   Glue
  * @link      https://github.com/wpglue
  * @author    Sheikh Heera <heera.sheikh77@gmail.com>
- * @license   https://github.com/wpglue/framework/blob/master/LICENSE GNU General Public License 3
+ * @license   https://github.com/wpglue/framework/blob/master/LICENSE
  */
 
 namespace GlueNamespace\Framework\Foundation;
