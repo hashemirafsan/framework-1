@@ -14,11 +14,10 @@ class ConfigProvider extends Provider
      */
 	public function booting()
     {
+        $config = new Config(array('app' => $this->app->getAppConfig()));
+
         $this->app->bindInstance(
-            'config',
-            new Config,
-            'Config',
-            'GlueNamespace\Framework\Config\Config'
+            'config', $config, 'Config', 'GlueNamespace\Framework\Config\Config'
         );
     }
 
@@ -40,21 +39,15 @@ class ConfigProvider extends Provider
     	$files = [];
         $configPath = $this->app->configPath();
         $itr = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
-            $configPath,RecursiveDirectoryIterator::SKIP_DOTS
+            $configPath, RecursiveDirectoryIterator::SKIP_DOTS
         ));
-
-        $this->app->config->set('app', $this->app->getAppConfig());
 
         foreach($itr as $file) {
             if (pathinfo($file, PATHINFO_EXTENSION) == "php" && $file->getFileName() != 'app.php') {
                 $fileRealPath = $file->getRealPath();
                 $directory = $this->getDirectory($file, $configPath);
-                $files[$directory.basename($fileRealPath, '.php')] = $fileRealPath;
+                $this->app->config->set($directory.basename($fileRealPath, '.php'), include $fileRealPath);
             }
-        }
-        
-        foreach ($files as $key => $path) {
-            $this->app->config->set($key, include $path);
         }
     }
 

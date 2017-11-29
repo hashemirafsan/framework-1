@@ -14,10 +14,7 @@ class AppProvider extends Provider
     public function booting()
     {
         $this->app->bindInstance(
-            'app',
-            $this->app,
-            'App',
-            'GlueNamespace\Framework\Foundation\Application'
+            'app', $this->app, 'App', 'GlueNamespace\Framework\Foundation\Application'
         );
     }
 
