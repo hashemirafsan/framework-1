@@ -14,7 +14,12 @@ class ConfigProvider extends Provider
      */
 	public function booting()
     {
-        $this->app->bindInstance('config', new Config, 'Config', Config::class);
+        $this->app->bindInstance(
+            'config',
+            new Config,
+            'Config',
+            'GlueNamespace\Framework\Config\Config'
+        );
     }
 
     /**

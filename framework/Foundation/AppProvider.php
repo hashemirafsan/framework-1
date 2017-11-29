@@ -13,7 +13,12 @@ class AppProvider extends Provider
      */
     public function booting()
     {
-        $this->app->bind('app', $this->app, 'App', Application::class);
+        $this->app->bindInstance(
+            'app',
+            $this->app,
+            'App',
+            'GlueNamespace\Framework\Foundation\Application'
+        );
     }
 
     /**

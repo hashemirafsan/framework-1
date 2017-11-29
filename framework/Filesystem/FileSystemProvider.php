@@ -14,6 +14,6 @@ class FileSystemProvider extends Provider
 	{
 		$this->app->bindSingleton('fs', function($app) {
 			return new FileSystem($app);
-		}, 'FS', ['FileSystem', FileSystem::class]);
+		}, 'FS', ['FileSystem', 'GlueNamespace\Framework\FileSystem\FileSystem']);
 	}
 }

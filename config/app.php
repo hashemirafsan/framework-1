@@ -4,24 +4,24 @@ return array(
 	'env' => 'dev',
 	'providers' => array(
 		'core' => array(
-			GlueNamespace\Framework\Foundation\AppProvider::class,
-			GlueNamespace\Framework\Config\ConfigProvider::class,
-			GlueNamespace\Framework\Request\RequestProvider::class,
-			GlueNamespace\Framework\View\ViewProvider::class,
-			GlueNamespace\Framework\FileSystem\FileSystemProvider::class,
+			'GlueNamespace\Framework\Foundation\AppProvider',
+			'GlueNamespace\Framework\Config\ConfigProvider',
+			'GlueNamespace\Framework\Request\RequestProvider',
+			'GlueNamespace\Framework\View\ViewProvider',
+			'GlueNamespace\Framework\FileSystem\FileSystemProvider',
 		),
 
 		'plugin' => array(
 			'common' => array(
-				GlueNamespace\App\Providers\CommonProvider::class,
+				'GlueNamespace\App\Providers\CommonProvider',
 			),
 
 			'backend' => array(
-				GlueNamespace\App\Providers\BackendProvider::class,
+				'GlueNamespace\App\Providers\BackendProvider',
 			),
 
 			'frontend' => array(
-				GlueNamespace\App\Providers\FrontendProvider::class,
+				'GlueNamespace\App\Providers\FrontendProvider',
 			),
 		),
 	),

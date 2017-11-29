@@ -62,21 +62,21 @@ class Bootstrap
 	public static function registerActivationHook()
 	{
 		return register_activation_hook(
-			static::$file, array(static::class, 'activate')
+			static::$file, array(__CLASS__, 'activate')
 		);
 	}
 
 	public static function registerDeactivationHook()
 	{
 		return register_deactivation_hook(
-			static::$file, array(static::class, 'deactivate')
+			static::$file, array(__CLASS__, 'deactivate')
 		);
 	}
 
 	public static function activate()
 	{
 		static::validatePlugin();
-		if (class_exists(Activator::class)) {
+		if (class_exists('GlueNamespace\App\Modules\Activator')) {
 			(new Activator)->handleActivation(static::$file);
 		}
 	}
@@ -84,7 +84,7 @@ class Bootstrap
 	public static function deactivate()
 	{
 		// Framework specific implementation if necessary...
-		if (class_exists(Deactivator::class)) {
+		if (class_exists('GlueNamespace\App\Modules\Deactivator')) {
 			(new Deactivator)->handleDeactivation(static::$file);
 		}
 	}
@@ -127,7 +127,7 @@ class Bootstrap
 	    	static::$config = array_merge(include static::$basePath.'config/app.php', static::$config);
 		}
 
-		spl_autoload_register([static::class, 'loader']);
+		spl_autoload_register([__CLASS__, 'loader']);
 	}
 
 	public static function loader($class)

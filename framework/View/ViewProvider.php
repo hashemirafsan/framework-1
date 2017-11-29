@@ -1,6 +1,7 @@
 <?php
 
 namespace GlueNamespace\Framework\View;
+
 use GlueNamespace\Framework\Foundation\Provider;
 
 class ViewProvider extends Provider
@@ -13,6 +14,6 @@ class ViewProvider extends Provider
 	{
 		$this->app->bind('view', function($app) {
 			return new View($app);
-		}, 'View', View::class);
+		}, 'View', 'GlueNamespace\Framework\View\View');
 	}
 }
