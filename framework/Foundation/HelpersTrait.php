@@ -10,10 +10,8 @@ trait HelpersTrait
      */
     public function load($file)
     {
-        $fn = function($app) use ($file) {
-            return include_once $file;
-        };
-        return $fn($this);
+        $app = $this;
+        include_once $file;
     }
 
 	/**
