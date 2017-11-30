@@ -8,7 +8,6 @@ return array(
 			'GlueNamespace\Framework\Config\ConfigProvider',
 			'GlueNamespace\Framework\Request\RequestProvider',
 			'GlueNamespace\Framework\View\ViewProvider',
-			'GlueNamespace\Framework\FileSystem\FileSystemProvider',
 		),
 
 		'plugin' => array(
