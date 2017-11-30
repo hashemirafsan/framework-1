@@ -84,4 +84,10 @@ class Request
 		}
 		return $values;
 	}
+
+	public function merge(array $data = [])
+	{
+		$this->request = array_merge($this->request, $data);
+		return $this;
+	}
 }
