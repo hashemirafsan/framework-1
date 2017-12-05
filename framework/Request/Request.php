@@ -22,7 +22,7 @@ class Request
 	{
 		$clean = [];
 		foreach ($request as $key => $value) {
-			$key = trim(strip_tags(stripslashes($key)));
+			$key = trim(stripslashes($key));
 			$clean[$key] = is_array($value) ? $this->clean($value) : $this->trimAndStrip($value);
 		}
 		return $clean;
@@ -30,7 +30,7 @@ class Request
 
 	public function trimAndStrip($value)
 	{
-		return trim(strip_tags(stripslashes($value)));
+		return trim(stripslashes($value));
 	}
 
 	public function set($key, $value)
