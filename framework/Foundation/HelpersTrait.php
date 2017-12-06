@@ -81,8 +81,8 @@ trait HelpersTrait
     	}
 
     	if ($scope == 'public') {
-        	$publicHook = add_action(
-        		'wp_ajax_no_priv_'.$tag,
+        	add_action(
+        		'wp_ajax_nopriv_'.$tag,
         		$ref = $this->parseHandler($handler),
         		$priority
         	);
