@@ -4,17 +4,37 @@ namespace GlueNamespace\Framework\Foundation;
 
 abstract class Provider
 {
-	protected $app = null;
+    /**
+     * $app \Framework\Foundation\Application
+     *
+     * @var null
+     */
+    protected $app = null;
 
-	public function __construct(Application $app)
-	{
-		$this->app = $app;
-	}
+    /**
+     * Build the instance
+     *
+     * @param \GlueNamespace\Framework\Foundation\Application $app
+     */
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
 
-	public abstract function booting();
-	
-	public function booted()
-	{
-		// ...
-	}
+    /**
+     * Booted method for any provider
+     *
+     * @return void
+     */
+    public function booted()
+    {
+        // ...
+    }
+
+    /**
+     * Abstract booting method for provider
+     *
+     * @return void
+     */
+    public abstract function booting();
 }

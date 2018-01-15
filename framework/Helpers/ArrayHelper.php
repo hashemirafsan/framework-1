@@ -2,17 +2,21 @@
 
 namespace GlueNamespace\Framework\Helpers;
 
+use Closure;
+use ArrayAccess;
+
 class ArrayHelper
 {
     /**
-	 * Taken from Illuminate\Support\Arr (Laravel Framework)
-	 */
-	
-	/**
+     * Taken from Illuminate\Support\Arr (Laravel Framework)
+     */
+
+    /**
      * Check if an item or items exist in an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array  $array
-     * @param  string|array  $keys
+     * @param \ArrayAccess|array $array
+     * @param string|array $keys
+     *
      * @return bool
      */
     public static function has($array, $keys)
@@ -49,18 +53,19 @@ class ArrayHelper
 
         return true;
     }
-	
-	/**
+
+    /**
      * Get an item from an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array  $array
-     * @param  string  $key
-     * @param  mixed   $default
+     * @param \ArrayAccess|array $array
+     * @param string $key
+     * @param mixed $default
+     *
      * @return mixed
      */
     public static function get($array, $key, $default = null)
     {
-        if (!static::accessible($array)) {
+        if (! static::accessible($array)) {
             return static::value($default);
         }
 
@@ -70,10 +75,6 @@ class ArrayHelper
 
         if (static::exists($array, $key)) {
             return $array[$key];
-        }
-
-        if (strpos($key, '.') === false) {
-            return $array[$key] ? $array[$key] : static::value($default);
         }
 
         foreach (explode('.', $key) as $segment) {
@@ -92,9 +93,10 @@ class ArrayHelper
      *
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param  array   $array
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param array $array
+     * @param string $key
+     * @param mixed $value
+     *
      * @return array
      */
     public static function set(&$array, $key, $value)
@@ -126,7 +128,8 @@ class ArrayHelper
     /**
      * Determine whether the given value is array accessible.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return bool
      */
     public static function accessible($value)
@@ -137,8 +140,9 @@ class ArrayHelper
     /**
      * Determine if the given key exists in the provided array.
      *
-     * @param  \ArrayAccess|array  $array
-     * @param  string|int  $key
+     * @param \ArrayAccess|array $array
+     * @param string|int $key
+     *
      * @return bool
      */
     public static function exists($array, $key)
@@ -153,7 +157,8 @@ class ArrayHelper
     /**
      * Return the default value of the given value.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return mixed
      */
     public static function value($value)

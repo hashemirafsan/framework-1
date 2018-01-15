@@ -15,231 +15,258 @@ use  GlueNamespace\Framework\Exception\ExceptionHandler;
 
 class Application extends Container
 {
-	use PathsAndUrlsTrait, SetGetAttributesTrait, FacadeLoaderTrait, HelpersTrait;
+    use PathsAndUrlsTrait, SetGetAttributesTrait, FacadeLoaderTrait, HelpersTrait;
 
-	/**
-	 * Framework Version
-	 */
-	const VERSION = '1.0.0';
+    /**
+     * Framework Version
+     */
+    const VERSION = '1.0.0';
 
-	/**
-	 * $baseFile root plugin file path
-	 * @var string
-	 */
-	protected $baseFile = null;
+    /**
+     * $baseFile root plugin file path
+     *
+     * @var string
+     */
+    protected $baseFile = null;
 
-	/**
-	 * The app config (/config/app.php)
-	 * @var array
-	 */
-	protected $appConfig = null;
+    /**
+     * The app config (/config/app.php)
+     *
+     * @var array
+     */
+    protected $appConfig = null;
 
-	/**
-	 * Callbacks for framework's booted event
-	 * @var array
-	 */
-	protected $engineBootedCallbacks = array();
+    /**
+     * Callbacks for framework's booted event
+     *
+     * @var array
+     */
+    protected $engineBootedCallbacks = [];
 
-	/**
-	 * Callbacks for framework's ready event
-	 * @var array
-	 */
-	protected $pluginReadyCallbacks = array();
-	
-	/**
-	 * A flag to register the dynamic facade loader once
-	 * @var boolean
-	 */
-	protected $isFacadeLoaderRegistered = false;
+    /**
+     * Callbacks for framework's ready event
+     *
+     * @var array
+     */
+    protected $pluginReadyCallbacks = [];
 
-	/**
-	 * Get application version
-	 * @return string
-	 */
-	public function version()
-	{
-		return self::VERSION;
-	}
+    /**
+     * A flag to register the dynamic facade loader once
+     *
+     * @var boolean
+     */
+    protected $isFacadeLoaderRegistered = false;
 
-	/**
-	 * Init the application
-	 * @param string $baseFile (root plugin file path)
-	 * @param array $appConfig (/config/app.php)
-	 */
-	public function __construct($baseFile, $appConfig)
-	{
-		$this->baseFile = $baseFile;
-		$this->appConfig = $appConfig;
-		$this->bootstrapApplication();
-	}
+    /**
+     * Get application version
+     *
+     * @return string
+     */
+    public function version()
+    {
+        return self::VERSION;
+    }
 
-	/**
-	 * Bootup the application
-	 * @param string $baseFile (root plugin file path)
-	 * @param array $appConfig (/config/app.php)
-	 * @return void
-	 */
-	protected function bootstrapApplication()
-	{
-		$this->setAppBaseBindings();
-		$this->setExceptionHandler();
-		$this->loadApplicationTextDomain();
-		$this->bootstrapWith($this->getEngineProviders());
-		$this->fireCallbacks($this->engineBootedCallbacks);
-		$this->bootstrapWith($this->getPluginProviders());
-		$this->fireCallbacks($this->pluginReadyCallbacks);
-	}
+    /**
+     * Init the application
+     *
+     * @param string $baseFile (root plugin file path)
+     * @param array $appConfig (/config/app.php)
+     */
+    public function __construct($baseFile, $appConfig)
+    {
+        $this->baseFile = $baseFile;
+        $this->appConfig = $appConfig;
+        $this->bootstrapApplication();
+    }
 
-	/**
-	 * Register application base bindings
-	 * @return  void
-	 */
-	protected function setAppBaseBindings()
-	{
-		$this->bindAppInstance();
-		$this->registerAppPaths();
-		$this->registerAppUrls();
-	}
+    /**
+     * Bootup the application
+     *
+     * @param string $baseFile (root plugin file path)
+     * @param array $appConfig (/config/app.php)
+     *
+     * @return void
+     */
+    protected function bootstrapApplication()
+    {
+        $this->setAppBaseBindings();
+        $this->setExceptionHandler();
+        $this->loadApplicationTextDomain();
+        $this->bootstrapWith($this->getEngineProviders());
+        $this->fireCallbacks($this->engineBootedCallbacks);
+        $this->bootstrapWith($this->getPluginProviders());
+        $this->fireCallbacks($this->pluginReadyCallbacks);
+    }
 
-	/**
-	 * Bind application instance
-	 * @return  void
-	 */
-	protected function bindAppInstance()
-	{
-		AppFacade::setApplication($this);
-	}
+    /**
+     * Register application base bindings
+     *
+     * @return  void
+     */
+    protected function setAppBaseBindings()
+    {
+        $this->bindAppInstance();
+        $this->registerAppPaths();
+        $this->registerAppUrls();
+    }
 
-	/**
-	 * Set Application paths
-	 * @return void
-	 */
-	protected function registerAppPaths()
-	{
-		$path = plugin_dir_path($this->baseFile);
-		$this->bindInstance('path', $path);
-		$this->bindInstance('path.app', $path.'app/');
-		$this->bindInstance('path.config', $path.'config/');
-		$this->bindInstance('path.public', $path.'public/');
-		$this->bindInstance('path.framework', $path.'framework/');
-		$this->bindInstance('path.resource', $path.'resources/');
-		$this->bindInstance('path.storage', $path.'storage/');
-		$this->bindInstance('path.asset', $path.'resources/assets/');
-		$this->bindInstance('path.language', $path.'resources/languages/');
-		$this->bindInstance('path.view', $path.'resources/views/');
-	}
+    /**
+     * Bind application instance
+     *
+     * @return  void
+     */
+    protected function bindAppInstance()
+    {
+        AppFacade::setApplication($this);
+    }
 
-	/**
-	 * Set Application urls
-	 * @return void
-	 */
-	protected function registerAppUrls()
-	{
-		$url = plugin_dir_url($this->baseFile);
-		$this->bindInstance('url', $url);
-		$this->bindInstance('url.public', $url.'public/');
-		$this->bindInstance('url.resource', $url.'resources/');
-		$this->bindInstance('url.asset', $url.'resources/assets/');
-	}
+    /**
+     * Set Application paths
+     *
+     * @return void
+     */
+    protected function registerAppPaths()
+    {
+        $path = plugin_dir_path($this->baseFile);
+        $this->bindInstance('path', $path);
+        $this->bindInstance('path.app', $path.'app/');
+        $this->bindInstance('path.config', $path.'config/');
+        $this->bindInstance('path.public', $path.'public/');
+        $this->bindInstance('path.framework', $path.'framework/');
+        $this->bindInstance('path.resource', $path.'resources/');
+        $this->bindInstance('path.storage', $path.'storage/');
+        $this->bindInstance('path.asset', $path.'resources/assets/');
+        $this->bindInstance('path.language', $path.'resources/languages/');
+        $this->bindInstance('path.view', $path.'resources/views/');
+    }
 
-	/**
-	 * Set Application Exception Handler
-	 * @return void
-	 */
-	protected function setExceptionHandler()
-	{
-		if (defined('WP_DEBUG') && WP_DEBUG && $this->getEnv() == 'dev') {
-			return new ExceptionHandler($this);
-		}
-	}
+    /**
+     * Set Application urls
+     *
+     * @return void
+     */
+    protected function registerAppUrls()
+    {
+        $url = plugin_dir_url($this->baseFile);
+        $this->bindInstance('url', $url);
+        $this->bindInstance('url.public', $url.'public/');
+        $this->bindInstance('url.resource', $url.'resources/');
+        $this->bindInstance('url.asset', $url.'resources/assets/');
+    }
 
-	/**
-	 * load languages path for i18n pot files
-	 * @return bool
-	 */
-	protected function loadApplicationTextDomain()
-	{
-		return load_plugin_textdomain(
-			$this->getTextDomain(), false, $this->languagePath()
-		);
-	}
+    /**
+     * Set Application Exception Handler
+     *
+     * @return void
+     */
+    protected function setExceptionHandler()
+    {
+        if (defined('WP_DEBUG') && WP_DEBUG && $this->getEnv() == 'dev') {
+            return new ExceptionHandler($this);
+        }
+    }
 
-	/**
-	 * Boot application with providers
-	 * @param  array $providers
-	 * @return void
-	 */
-	public function bootstrapWith(array $providers)
-	{
-		$instances = [];
+    /**
+     * load languages path for i18n pot files
+     *
+     * @return bool
+     */
+    protected function loadApplicationTextDomain()
+    {
+        return load_plugin_textdomain(
+            $this->getTextDomain(), false, $this->languagePath()
+        );
+    }
 
-		foreach ($providers as $provider) {
-			$instances[] = $instance = new $provider($this);
-			$instance->booting();
-		}
+    /**
+     * Boot application with providers
+     *
+     * @param array $providers
+     *
+     * @return void
+     */
+    public function bootstrapWith(array $providers)
+    {
+        $instances = [];
 
-		if (!$this->isFacadeLoaderRegistered) {
-			$this->registerAppFacadeLoader();
-		}
+        foreach ($providers as $provider) {
+            $instances[] = $instance = new $provider($this);
+            $instance->booting();
+        }
 
-		foreach ($instances as $object) {
-			$object->booted();
-		}
-	}
+        if (! $this->isFacadeLoaderRegistered) {
+            $this->registerAppFacadeLoader();
+        }
 
-	/**
-	 * Get engine/core providers
-	 * @return array
-	 */
-	public function getEngineProviders()
-	{
-		return $this->getProviders('core');
-	}
+        foreach ($instances as $object) {
+            $object->booted();
+        }
+    }
 
-	/**
-	 * Get plugin providers (Common)
-	 * @return array
-	 */
-	public function getCommonProviders()
-	{
-		return $this->getProviders('plugin')['common'];
-	}
+    /**
+     * Get engine/core providers
+     *
+     * @return array
+     */
+    public function getEngineProviders()
+    {
+        return $this->getProviders('core');
+    }
 
-	/**
-	 * Get plugin providers (Backend|Frontend)
-	 * @return array
-	 */
-	public function getPluginProviders()
-	{
+    /**
+     * Get plugin providers (Common)
+     *
+     * @return array
+     */
+    public function getCommonProviders()
+    {
+        return $this->getProviders('plugin')['common'];
+    }
+
+    /**
+     * Get plugin providers (Backend|Frontend)
+     *
+     * @return array
+     */
+    public function getPluginProviders()
+    {
         if ($this->isUserOnAdminArea()) {
             return $this->getProviders('plugin')['backend'];
         } else {
             return $this->getProviders('plugin')['frontend'];
         }
-	}
+    }
 
     /**
      * Register booted events
+     *
      * @param  mixed $callback
+     *
      * @return void
      */
     public function booted($callback)
     {
-    	$this->engineBootedCallbacks[] = $this->parseHandler($callback);
+        $this->engineBootedCallbacks[] = $this->parseHandler($callback);
     }
+
     /**
      * Register ready events
-     * @param  mixed $callback
+     *
+     * @param mixed $callback
+     *
      * @return void
      */
     public function ready($callback)
     {
-    	$this->pluginReadyCallbacks[] = $this->parseHandler($callback);
+        $this->pluginReadyCallbacks[] = $this->parseHandler($callback);
     }
 
     /**
      * Fire application event's handlers
-     * @param  array  $callbacks
+     *
+     * @param array $callbacks
+     *
      * @return void
      */
     public function fireCallbacks(array $callbacks)
