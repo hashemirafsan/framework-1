@@ -4,64 +4,124 @@ namespace GlueNamespace\Framework\Foundation;
 
 trait SetGetAttributesTrait
 {
-	public function __get($key)
-	{
-		return $this->make($key);
-	}
+    /**
+     * Dynamic getter for application
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return $this->make($key);
+    }
 
-	public function __set($key, $value)
-	{
-	    $this[$key] = $value;
-	}
+    /**
+     * Dynamic setter for application
+     *
+     * @param string $key
+     * @param mixed $value
+     */
+    public function __set($key, $value)
+    {
+        $this[$key] = $value;
+    }
 
-	public function getBaseFile()
-	{
-		return $this->baseFile;
-	}
+    /**
+     * Getter for retrieving plugin's base file path
+     *
+     * @return string
+     */
+    public function getBaseFile()
+    {
+        return $this->baseFile;
+    }
 
-	public function getAppConfig()
-	{
-		return $this->appConfig;
-	}
+    /**
+     * Get application's main config
+     *
+     * @return array
+     */
+    public function getAppConfig()
+    {
+        return $this->appConfig;
+    }
 
-	public function getProviders($type = null)
-	{
-		$providers = $this->getAppConfig()['providers'];
-		
-		return $type ? $providers[$type] : $providers;
-	}
+    /**
+     * Get application's providers
+     *
+     * @param string $type [core|plugin]
+     *
+     * @return array
+     */
+    public function getProviders($type = null)
+    {
+        $providers = $this->getAppConfig()['providers'];
 
-	public function getName()
-	{
-		return $this->getAppConfig()['plugin_name'];
-	}
+        return $type ? $providers[$type] : $providers;
+    }
 
-	public function getSlug()
-	{
-		return $this->appConfig['plugin_slug'];
-	}
+    /**
+     * Get plugin name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getAppConfig()['plugin_name'];
+    }
 
-	public function getVersion()
-	{
-		return $this->appConfig['plugin_version'];
-	}
+    /**
+     * Get plugin slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->appConfig['plugin_slug'];
+    }
 
-	public function getNamespace()
-	{
-		return $this->getAppConfig()['autoload']['namespace'];
-	}
+    /**
+     * Get plugin version
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->appConfig['plugin_version'];
+    }
 
-	public function getTextDomain()
-	{
-		return $this->appConfig['plugin_text_domain']
-		? $this->appConfig['plugin_text_domain']
-		: $this->appConfig['plugin_slug'];
-	}
+    /**
+     * Get plugin root namespace
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->getAppConfig()['autoload']['namespace'];
+    }
 
-	public function getEnv()
-	{
-		if (isset($this->getAppConfig()['env'])) {
-			return $this->getAppConfig()['env'];
-		}
-	}
+    /**
+     * Get plugin text domain
+     *
+     * @return string
+     */
+    public function getTextDomain()
+    {
+        return $this->appConfig['plugin_text_domain']
+            ? $this->appConfig['plugin_text_domain']
+            : $this->appConfig['plugin_slug'];
+    }
+
+    /**
+     * Get application evironment
+     *
+     * @return string
+     */
+    public function getEnv()
+    {
+        if (isset($this->getAppConfig()['env'])) {
+            return $this->getAppConfig()['env'];
+        }
+    }
 }

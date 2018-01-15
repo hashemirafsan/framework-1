@@ -6,12 +6,13 @@
  */
 
 if (! function_exists('dd')) {
-	function dd() {
-        echo "<pre>";
+    function dd()
+    {
         foreach (func_get_args() as $value) {
+            echo "<pre>";
             print_r($value);
-            echo "<br>";
+            echo "</pre><br>";
         }
-		die;
-	}
+        die;
+    }
 }

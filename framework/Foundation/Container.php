@@ -13,29 +13,32 @@ class Container implements ArrayAccess
 {
     /**
      * $container The service container
+     *
      * @var array
      */
-    protected static $container = array(
-        'facades' => array(),
-        'aliases' => array(),
-        'resolved' => array(),
-        'bindings' => array(),
-        'singletons' => array(),
-    );
+    protected static $container = [
+        'facades'    => [],
+        'aliases'    => [],
+        'resolved'   => [],
+        'bindings'   => [],
+        'singletons' => [],
+    ];
 
     /**
      * Bind an instance into service container
-     * @param  string $key identifier
-     * @param  mixed $concrete
-     * @param  string $facade [optional facade]
-     * @param  string $alias [optional alias]
+     *
+     * @param string $key identifier
+     * @param mixed $concrete
+     * @param string $facade [optional facade]
+     * @param string $alias [optional alias]
+     *
      * @return void
      */
     public function bind($key, $concrete = null, $facade = null, $alias = null, $shared = false)
     {
         $concrete = is_null($concrete) ? $key : $concrete;
 
-        if (!$shared) {
+        if (! $shared) {
             static::$container['bindings'][$key] = $concrete;
         } else {
             static::$container['singletons'][$key] = $concrete;
@@ -52,10 +55,12 @@ class Container implements ArrayAccess
 
     /**
      * Bind a singleton instance into service container
-     * @param  string $key identifier
-     * @param  mixed $concrete
-     * @param  string $facade [optional facade]
-     * @param  string $alias [optional alias]
+     *
+     * @param string $key identifier
+     * @param mixed $concrete
+     * @param string $facade [optional facade]
+     * @param string $alias [optional alias]
+     *
      * @return void
      */
     public function bindSingleton($key, $concrete = null, $facade = null, $alias = null)
@@ -65,23 +70,27 @@ class Container implements ArrayAccess
 
     /**
      * Bind a singleton instance into service container
-     * @param  string $key identifier
-     * @param  mixed $concrete
-     * @param  string $facade [optional facade]
-     * @param  string $alias [optional alias]
+     *
+     * @param string $key identifier
+     * @param mixed $concrete
+     * @param string $facade [optional facade]
+     * @param string $alias [optional alias]
+     *
      * @return void
      */
     public function bindInstance($key, $concrete, $facade = null, $alias = null)
     {
-        $this->bind($key, function($app) use ($concrete) {
+        $this->bind($key, function ($app) use ($concrete) {
             return $concrete;
         }, $facade, $alias, true);
     }
 
     /**
      * Register a facade for a registered instance
-     * @param  string $key
-     * @param  string $facade
+     *
+     * @param string $key
+     * @param string $facade
+     *
      * @return string
      */
     public function facade($key, $facade)
@@ -91,8 +100,10 @@ class Container implements ArrayAccess
 
     /**
      * Register an alias for a registered instance
-     * @param  string $key
-     * @param  string $alias
+     *
+     * @param string $key
+     * @param string $alias
+     *
      * @return string
      */
     public function alias($key, $aliases)
@@ -104,9 +115,11 @@ class Container implements ArrayAccess
 
     /**
      * Resolve an instance from container
-     * @param  string $key
+     *
+     * @param string $key
+     *
      * @return mixed
-     * @throws GlueNamespace\Framework\Exception\UnResolveableEntityException
+     * @throws \GlueNamespace\Framework\Exception\UnResolveableEntityException
      */
     public function make($key = null, array $params = [])
     {
@@ -122,16 +135,16 @@ class Container implements ArrayAccess
 
         if (isset(static::$container['singletons'][$key])) {
             return static::$container['resolved'][$key] = $this->resolve(
-                static::$container['singletons'][$key]
+                static::$container['singletons'][$key], $params
             );
         }
 
         if (isset(static::$container['bindings'][$key])) {
-            return $this->resolve(static::$container['bindings'][$key]);
+            return $this->resolve(static::$container['bindings'][$key], $params);
         }
 
         if ($this->classExists($key)) {
-            return $this->resolve($key);
+            return $this->resolve($key, $params);
         }
 
         throw new UnResolveableEntityException(
@@ -141,36 +154,46 @@ class Container implements ArrayAccess
 
     /**
      * Resolve an item from the container
-     * @param  mixed $value
+     *
+     * @param mixed $value
+     *
      * @return mixed
      */
-    protected function resolve($value)
+    protected function resolve($value, $params = [])
     {
-        return $value instanceof Closure ? $value($this) : $this->build($value);
+        if ($value instanceof Closure) {
+            return $value($this, $params);
+        }
+
+        return $this->build($value, $params);
     }
 
     /**
      * Build a concrete class with all dependencies
+     *
      * @param string $value FQN class name
+     *
      * @return mixed resolved instance
      */
-    protected function build($value)
+    protected function build($value, $params = [])
     {
-        if (is_object($value)) return $value;
+        if (is_object($value)) {
+            return $value;
+        }
 
         $reflector = new ReflectionClass($value);
 
-        if (!$reflector->isInstantiable()) {
+        if (! $reflector->isInstantiable()) {
             throw new UnResolveableEntityException(
                 "The [$value] is not instantiable."
             );
         }
 
-        if (!$constructor = $reflector->getConstructor()) {
+        if (! $constructor = $reflector->getConstructor()) {
             return new $value;
         }
 
-        $dependencies = $this->resolveDependencies(
+        $dependencies = $params ? $params : $this->resolveDependencies(
             $constructor->getParameters()
         );
 
@@ -179,21 +202,27 @@ class Container implements ArrayAccess
 
     /**
      * Resolve all dependencies of a single class
-     * @param  array $dependencies Constructor Parameters
+     *
+     * @param array $dependencies Constructor Parameters
+     *
      * @return array An array of all the resolved dependencies of one class
      */
     protected function resolveDependencies(array $dependencies)
     {
         $results = [];
+
         foreach ($dependencies as $dependency) {
             $results[] = $this->resolveClass($dependency);
         }
+
         return $results;
     }
 
     /**
      * Resolves a single class instance
-     * @param  ReflectionParameter $parameter
+     *
+     * @param ReflectionParameter $parameter
+     *
      * @return mixed
      * @throws Exception
      */
@@ -201,24 +230,26 @@ class Container implements ArrayAccess
     {
         try {
             return $this->make($parameter->getClass()->name);
-        }
-        catch (Exception $exception) {
+        } catch (Exception $exception) {
             if ($parameter->isOptional()) {
                 return $parameter->getDefaultValue();
-            } elseif (!$parameter->getClass()) {
+            } elseif (! $parameter->getClass()) {
                 $name = $parameter->getName();
                 $cls = $parameter->getDeclaringClass();
                 throw new UnResolveableEntityException(
                     "The [".$cls->name."] is not instantiable, $".$name." is required."
                 );
             }
+
             throw $exception;
         }
     }
 
     /**
      * Get the alias for a key if available.
-     * @param  string  $key
+     *
+     * @param string $key
+     *
      * @return string
      */
     public function getAlias($key)
@@ -232,7 +263,9 @@ class Container implements ArrayAccess
 
     /**
      * Check if a given class/interface exists
-     * @param  string $key
+     *
+     * @param string $key
+     *
      * @return bool
      */
     protected function classExists($key)
@@ -242,19 +275,23 @@ class Container implements ArrayAccess
 
     /**
      * Check if an item exists at a given offset
-     * @param  string  $offset
+     *
+     * @param string $offset
+     *
      * @return bool
      */
     public function bound($offset)
     {
         return isset(static::$container['resolved'][$offset]) ||
-        isset(static::$container['bindings'][$offset]) ||
-        isset(static::$container['singletons'][$offset]);
+            isset(static::$container['bindings'][$offset]) ||
+            isset(static::$container['singletons'][$offset]);
     }
 
     /**
      * Check if an item exists at a given offset
-     * @param  string  $offset
+     *
+     * @param string $offset
+     *
      * @return bool
      */
     public function has($offset)
@@ -264,7 +301,9 @@ class Container implements ArrayAccess
 
     /**
      * Check if an item exists at a given offset
-     * @param  string  $offset
+     *
+     * @param string $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -274,8 +313,10 @@ class Container implements ArrayAccess
 
     /**
      * Get the value from given offset
-     * @param  string  $offset
-     * @param  mixed   $value
+     *
+     * @param string $offset
+     * @param mixed $value
+     *
      * @return void
      */
     public function offsetGet($offset)
@@ -285,20 +326,24 @@ class Container implements ArrayAccess
 
     /**
      * Set the value at a given offset
-     * @param  string  $offset
-     * @param  mixed   $value
+     *
+     * @param string $offset
+     * @param mixed $value
+     *
      * @return void
      */
     public function offsetSet($offset, $value)
     {
-        static::$container['singletons'][$offset] = function() use ($value) {
+        static::$container['singletons'][$offset] = function () use ($value) {
             return $value;
         };
     }
 
     /**
      * Unset the value at a given offset
-     * @param  string  $offset
+     *
+     * @param string $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)

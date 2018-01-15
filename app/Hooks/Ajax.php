@@ -1,5 +1,5 @@
 <?php
 
 /**
- * Declare all ajax actions
+ * Add all ajax hooks
  */
