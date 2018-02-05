@@ -141,7 +141,7 @@ class Bootstrap
 	        die('The [namespace] key is not specified or invalid in "'.$glueJson.'" file.');
 	    }
 
-	    if (!($namespaceMapping = (array) @$autoload['mapping'])) {
+	    if (!($namespaceMapping = @$autoload['mapping'])) {
 	        die('The [mapping] key is not specified or invalid in "'.$glueJson.'" file.');
 	    }
 	}
