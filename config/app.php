@@ -1,27 +1,27 @@
 <?php
 
-return array(
-	'env' => 'dev',
-	'providers' => array(
-		'core' => array(
-			'GlueNamespace\Framework\Foundation\AppProvider',
-			'GlueNamespace\Framework\Config\ConfigProvider',
-			'GlueNamespace\Framework\Request\RequestProvider',
-			'GlueNamespace\Framework\View\ViewProvider',
-		),
+return [
+    'env'       => 'dev',
+    'providers' => [
+        'core' => [
+            'GlueNamespace\Framework\Foundation\AppProvider',
+            'GlueNamespace\Framework\Config\ConfigProvider',
+            'GlueNamespace\Framework\Request\RequestProvider',
+            'GlueNamespace\Framework\View\ViewProvider',
+        ],
 
-		'plugin' => array(
-			'common' => array(
-				'GlueNamespace\App\Providers\CommonProvider',
-			),
+        'plugin' => [
+            'common' => [
+                'GlueNamespace\App\Providers\CommonProvider',
+            ],
 
-			'backend' => array(
-				'GlueNamespace\App\Providers\BackendProvider',
-			),
+            'backend' => [
+                'GlueNamespace\App\Providers\BackendProvider',
+            ],
 
-			'frontend' => array(
-				'GlueNamespace\App\Providers\FrontendProvider',
-			),
-		),
-	),
-);
+            'frontend' => [
+                'GlueNamespace\App\Providers\FrontendProvider',
+            ],
+        ],
+    ],
+];

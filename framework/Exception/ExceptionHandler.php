@@ -8,6 +8,7 @@ class ExceptionHandler
 
     /**
      * framework\App\Application
+     *
      * @var Object
      */
     protected $app = null;
@@ -18,15 +19,15 @@ class ExceptionHandler
         $this->registerHandlers();
     }
 
-	public function registerHandlers()
-	{
-		error_reporting(-1);
+    public function registerHandlers()
+    {
+        error_reporting(-1);
         set_error_handler([$this, 'handleError']);
         set_exception_handler([$this, 'handleException']);
         register_shutdown_function([$this, 'handleShutdown']);
-	}
+    }
 
-	public function handleError($severity, $message, $file = '', $line = 0)
+    public function handleError($severity, $message, $file = '', $line = 0)
     {
         if (error_reporting() & $severity) {
             throw new \ErrorException($message, 0, $severity, $file, $line);
@@ -45,7 +46,7 @@ class ExceptionHandler
 
     public function handleShutdown()
     {
-        if (!is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
+        if (! is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
             $this->handleException(new \ErrorException(
                 $error['message'], 0, $error['type'], $error['file'], $error['line']
             ));
@@ -55,7 +56,7 @@ class ExceptionHandler
     public function report($e)
     {
         $logDir = $this->app->storagePath('logs');
-        if (!is_readable($logDir)) {
+        if (! is_readable($logDir)) {
             mkdir($logDir, 0777);
         }
 
@@ -68,8 +69,8 @@ class ExceptionHandler
 
     public function render($e)
     {
-        echo get_class($e) .' : '. $e->getMessage() . ' in ' . $e->getFile() . ' (' . $e->getLine() . ')';
-        echo '<br><pre>' . str_replace("\n", '<br>', $e->getTraceAsString()) . '</pre>';
+        echo get_class($e).' : '.$e->getMessage().' in '.$e->getFile().' ('.$e->getLine().')';
+        echo '<br><pre>'.str_replace("\n", '<br>', $e->getTraceAsString()).'</pre>';
     }
 
     protected function isFatal($type)

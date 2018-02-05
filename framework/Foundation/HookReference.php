@@ -4,25 +4,49 @@ namespace GlueNamespace\Framework\Foundation;
 
 class HookReference
 {
-	private $ref = null;
+    /**
+     * $ref reference for any hook
+     *
+     * @var null
+     */
+    private $ref = null;
 
-	public function __construct(Application $app, $ref, $key = null)
-	{
-		$this->app = $app;
-		$this->ref = $ref;
-		$this->key = $key;
-	}
+    /**
+     * construct the instance
+     *
+     * @param \GlueNamespace\Framework\Foundation\Application $app
+     * @param reference $ref
+     * @param string $key
+     */
+    public function __construct(Application $app, $ref, $key = null)
+    {
+        $this->app = $app;
+        $this->ref = $ref;
+        $this->key = $key;
+    }
 
-	public function saveReference($key = null)
-	{
-		// TODO: Add exception
-		$this->app->bindInstance($key ? $key : $this->key, $this->ref);
+    /**
+     * Save the hook's handler reference
+     *
+     * @param string $key
+     *
+     * @return reference
+     */
+    public function saveReference($key = null)
+    {
+        // TODO: Add exception
+        $this->app->bindInstance($key ? $key : $this->key, $this->ref);
 
-		return $this->ref;
-	}
+        return $this->ref;
+    }
 
-	public function reference()
-	{
-		return $this->ref;
-	}
+    /**
+     * Get the reference
+     *
+     * @return reference
+     */
+    public function reference()
+    {
+        return $this->ref;
+    }
 }

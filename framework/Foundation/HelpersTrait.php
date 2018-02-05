@@ -6,30 +6,35 @@ trait HelpersTrait
 {
     /**
      * Load a file using include_once
+     *
      * @return boolean
      */
     public function load($file)
     {
         $app = $this;
+
         return include $file;
     }
 
-	/**
-	 * Checks if the user is on wp-admin area (visiting backend)
-	 * (It doesn't check whether user is authenticated ro not)
-	 * @return boolean
-	 */
-	public function isUserOnAdminArea()
-	{
-		return is_admin();
-	}
+    /**
+     * Checks if the user is on wp-admin area (visiting backend)
+     * (It doesn't check whether user is authenticated ro not)
+     *
+     * @return boolean
+     */
+    public function isUserOnAdminArea()
+    {
+        return is_admin();
+    }
 
-	/**
-	 * Application's callbacks parser
-	 * @param  mixed $args
-	 * @return mixed
-	 */
-	public function parseHandler($args)
+    /**
+     * Application's callbacks parser
+     *
+     * @param mixed $args
+     *
+     * @return mixed
+     */
+    public function parseHandler($args)
     {
         $args = is_array($args) ? $args : func_get_args();
 
@@ -44,7 +49,7 @@ trait HelpersTrait
                 list($class, $method) = explode('::', $args[0]);
                 return [$class, $method];
             } elseif (isset($args[1]) && is_string($args[1])) {
-            	return $args;
+                return $args;
             }
         } else {
             return $args;
@@ -53,8 +58,10 @@ trait HelpersTrait
 
     /**
      * Make a unique key/hook with the application slug prefix
-     * @param  string $tag
-     * @param  string $prefix [optional prefix instead of app slug]
+     *
+     * @param string $tag
+     * @param string $prefix [optional prefix instead of app slug]
+     *
      * @return string
      */
     public function makeKey($tag, $prefix = null)
@@ -64,38 +71,42 @@ trait HelpersTrait
 
     /**
      * Add/Register an ajax action
+     *
      * @param string $tag [action name]
      * @param mixed $handler
      * @param integer $priority [optional]
      * @param string $scope [specify the scope of the ajax action|internal use]
-     * @return Framework\Foundation\HookReference
+     *
+     * @return \GlueNamespace\Framework\Foundation\HookReference
      */
     private function addAjaxAction($tag, $handler, $priority = 10, $scope)
     {
-    	if ($scope == 'admin') {
-        	add_action(
-        		'wp_ajax_'.$tag,
-        		$ref = $this->parseHandler($handler),
-        		$priority
-        	);
-    	}
+        if ($scope == 'admin') {
+            add_action(
+                'wp_ajax_'.$tag,
+                $ref = $this->parseHandler($handler),
+                $priority
+            );
+        }
 
-    	if ($scope == 'public') {
-        	add_action(
-        		'wp_ajax_nopriv_'.$tag,
-        		$ref = $this->parseHandler($handler),
-        		$priority
-        	);
-    	}
+        if ($scope == 'public') {
+            add_action(
+                'wp_ajax_nopriv_'.$tag,
+                $ref = $this->parseHandler($handler),
+                $priority
+            );
+        }
 
-    	return new HookReference($this, $ref, $tag);
+        return new HookReference($this, $ref, $tag);
     }
 
     /**
      * Add an ajax action for authenticated user
+     *
      * @param string $tag [action name]
      * @param mixed $handler
      * @param integer $priority [optional]
+     *
      * @return mixed [a reference to the handler to remove the action later]
      */
     public function addAdminAjaxAction($tag, $handler, $priority = 10)
@@ -105,9 +116,11 @@ trait HelpersTrait
 
     /**
      * Add an ajax action for unauthenticated user
+     *
      * @param string $tag [action name]
      * @param mixed $handler
      * @param integer $priority [optional]
+     *
      * @return mixed [a reference to the handler to remove the action later]
      */
     public function addPublicAjaxAction($tag, $handler, $priority = 10)
@@ -117,36 +130,40 @@ trait HelpersTrait
 
     /**
      * Remove/Unregister a registered ajax action
+     *
      * @param string $tag [action name]
      * @param mixed $handler [previously stored reference when added the action]
      * @param integer $priority [optional]
      * @param string $scope [specify the scope of the ajax action|internal use]
+     *
      * @return mixed [a reference to the handler to remove the action later]
      */
     private function removeAjaxAction($tag, $handler, $priority = 10, $scope)
     {
-    	if ($scope == 'admin') {
-        	return remove_action(
-        		'wp_ajax_'.$tag,
-        		$this->parseHandler($handler),
-        		$priority
-        	);
-    	}
+        if ($scope == 'admin') {
+            return remove_action(
+                'wp_ajax_'.$tag,
+                $this->parseHandler($handler),
+                $priority
+            );
+        }
 
-    	if ($scope == 'public') {
-        	return remove_action(
-        		'wp_ajax_no_priv_'.$tag,
-        		$this->parseHandler($handler),
-        		$priority
-        	);
-    	}
+        if ($scope == 'public') {
+            return remove_action(
+                'wp_ajax_no_priv_'.$tag,
+                $this->parseHandler($handler),
+                $priority
+            );
+        }
     }
 
     /**
      * Remove an ajax action for authenticated user
+     *
      * @param string $tag [action name]
      * @param mixed $handler [previously stored reference when added the action]
      * @param integer $priority [optional]
+     *
      * @return bool [true on success or false on failure]
      */
     public function removeAdminAjaxAction($tag, $handler, $priority = 10)
@@ -156,9 +173,11 @@ trait HelpersTrait
 
     /**
      * Remove an ajax action for unauthenticated user
+     *
      * @param string $tag [action name]
      * @param mixed $handler [previously stored reference when added the action]
      * @param integer $priority [optional]
+     *
      * @return bool [true on success or false on failure]
      */
     public function removePublicAjaxAction($tag, $handler, $priority = 10)
@@ -169,11 +188,13 @@ trait HelpersTrait
 
     /**
      * Add WordPress Filter
-     * @param  string $tag
-     * @param  mixed $handler
-     * @param  integer $priority
-     * @param  integer $acceptedArgs
-     * @return Framework\Foundation\HookReference
+     *
+     * @param string $tag
+     * @param mixed $handler
+     * @param integer $priority
+     * @param integer $acceptedArgs
+     *
+     * @return \GlueNamespace\Framework\Foundation\HookReference
      */
     public function addfilter($tag, $handler, $priority = 10, $acceptedArgs = 1)
     {
@@ -189,9 +210,11 @@ trait HelpersTrait
 
     /**
      * Remove WordPress Filter.
-     * @param  string $tag
-     * @param  mixed  $handler
-     * @param  integer $priority
+     *
+     * @param string $tag
+     * @param mixed $handler
+     * @param integer $priority
+     *
      * @return true
      */
     public function removeFilter($tag, $handler, $priority = 10)
@@ -205,8 +228,10 @@ trait HelpersTrait
 
     /**
      * Remove WordPress' All Filters.
-     * @param  string $tag
-     * @param  boolean $priority
+     *
+     * @param string $tag
+     * @param boolean $priority
+     *
      * @return bool
      */
     public function removeFilters($tag, $priority = false)
@@ -216,6 +241,7 @@ trait HelpersTrait
 
     /**
      * Apply WordPress Filter.
+     *
      * @return mixed [filtered content]
      */
     public function applyFilters()
@@ -225,11 +251,13 @@ trait HelpersTrait
 
     /**
      * Add WordPress Action
-     * @param  string $tag
-     * @param  mixed $handler
-     * @param  integer $priority
-     * @param  integer $acceptedArgs
-     * @return Framework\Foundation\HookReference
+     *
+     * @param string $tag
+     * @param mixed $handler
+     * @param integer $priority
+     * @param integer $acceptedArgs
+     *
+     * @return \GlueNamespace\Framework\Foundation\HookReference
      */
     public function addAction($tag, $handler, $priority = 10, $acceptedArgs = 1)
     {
@@ -245,8 +273,10 @@ trait HelpersTrait
 
     /**
      * Remove WordPress' Action.
-     * @param  string $tag
-     * @param  boolean $priority
+     *
+     * @param string $tag
+     * @param boolean $priority
+     *
      * @return bool
      */
     public function removeAction($tag, $handler, $priority = 10)
@@ -260,8 +290,10 @@ trait HelpersTrait
 
     /**
      * Remove WordPress' All Actions.
-     * @param  string $tag
-     * @param  boolean $priority
+     *
+     * @param string $tag
+     * @param boolean $priority
+     *
      * @return bool
      */
     public function removeActions($tag, $priority = false)
@@ -271,6 +303,7 @@ trait HelpersTrait
 
     /**
      * Do WordPress Action.
+     *
      * @return void
      */
     public function doAction()
@@ -280,6 +313,7 @@ trait HelpersTrait
 
     /**
      * Add WordPress Short Code.
+     *
      * @param string $tag
      * @param mixed $handler
      */
@@ -293,6 +327,7 @@ trait HelpersTrait
 
     /**
      * Remove WordPress Short Code.
+     *
      * @param string $content
      * @param bool $ignoreHtml
      */
@@ -303,6 +338,7 @@ trait HelpersTrait
 
     /**
      * Do WordPress Short Code.
+     *
      * @param string $content
      * @param bool $ignoreHtml
      */
@@ -315,17 +351,21 @@ trait HelpersTrait
 
     /**
      * Format the short content (make shortcode content string)
-     * @param  string $tag
-     * @param  array $atts
-     * @param  string $content
+     *
+     * @param string $tag
+     * @param array $atts
+     * @param string $content
+     *
      * @return string
      */
     public function formatShortCode($tag, $atts, $content = null)
     {
         $str = '';
+
         foreach ($atts as $key => $value) {
             $str .= " {$key}={$value}";
         }
+
         return "[{$tag}{$str}]{$content}[/{$tag}]";
     }
 }

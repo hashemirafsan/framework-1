@@ -4,159 +4,219 @@ namespace GlueNamespace\Framework\Foundation;
 
 use GlueNamespace\App\Modules\Activator;
 use GlueNamespace\App\Modules\Deactivator;
-use GlueNamespace\Framework\Foundation\Application;
 
 class Bootstrap
 {
-	/**
-	 * The main plugin file path
-	 * @var strring
-	 */
-	protected static $file = null;
+   /**
+     * The main plugin file path
+     *
+     * @var strring
+     */
+    protected static $file = null;
 
-	/**
-	 * The base dir path of the plugin
-	 * @var strring
-	 */
-	protected static $basePath = null;
+    /**
+     * The base dir path of the plugin
+     *
+     * @var strring
+     */
+    protected static $basePath = null;
 
-	/**
-	 * The app config (/config/app.php)
-	 * @var strring
-	 */
-	protected static $config = array();
+    /**
+     * The app config (/config/app.php)
+     *
+     * @var strring
+     */
+    protected static $config = [];
 
-	/**
-	 * Conveniently start the framework
-	 * @param  string $file
-	 * @return $ */
-	public static function run($file)
-	{
-		static::init($file);
-		static::registerHooks();
-		static::registerAutoLoader();
-		static::registerApplication();
-	}
+    /**
+     * Conveniently start the framework
+     *
+     * @param string $file
+     *
+     * @return void
+     */
+    public static function run($file)
+    {
+        static::init($file);
+        static::registerHooks();
+        static::registerAutoLoader();
+        static::registerApplication();
+    }
 
-	public static function init($file)
-	{
-		static::$file = $file;
+    /**
+     * Initialize the framework
+     *
+     * @param string $file [the main plugin file path]
+     *
+     * @return void
+     */
+    public static function init($file)
+    {
+        static::$file = $file;
 
-		static::$basePath = plugin_dir_path($file);
+        static::$basePath = plugin_dir_path($file);
 
-		if (file_exists($activator = static::$basePath.'app/Modules/Activator.php')) {
-			include_once $activator;
-		}
+        if (file_exists($activator = static::$basePath.'app/Modules/Activator.php')) {
+            include_once $activator;
+        }
 
-		if (file_exists($deactivator = static::$basePath.'app/Modules/Deactivator.php')) {
-			include_once $deactivator;
-		}
-	}
+        if (file_exists($deactivator = static::$basePath.'app/Modules/Deactivator.php')) {
+            include_once $deactivator;
+        }
+    }
 
-	public static function registerHooks()
-	{
-		static::registerActivationHook();
-		static::registerDeactivationHook();
-	}
+    /**
+     * Register activation/deactivation hooks
+     *
+     * @return void
+     */
+    public static function registerHooks()
+    {
+        static::registerActivationHook();
+        static::registerDeactivationHook();
+    }
 
-	public static function registerActivationHook()
-	{
-		return register_activation_hook(
-			static::$file, array(__CLASS__, 'activate')
-		);
-	}
+    /**
+     * Register activation hook
+     *
+     * @return bool
+     */
+    public static function registerActivationHook()
+    {
+        return register_activation_hook(
+            static::$file, [__CLASS__, 'activate']
+        );
+    }
 
-	public static function registerDeactivationHook()
-	{
-		return register_deactivation_hook(
-			static::$file, array(__CLASS__, 'deactivate')
-		);
-	}
+    /**
+     * Register deactivation hook
+     *
+     * @return bool
+     */
+    public static function registerDeactivationHook()
+    {
+        return register_deactivation_hook(
+            static::$file, [__CLASS__, 'deactivate']
+        );
+    }
 
-	public static function activate()
-	{
-		static::validatePlugin();
-		if (class_exists('GlueNamespace\App\Modules\Activator')) {
-			(new Activator)->handleActivation(static::$file);
-		}
-	}
+    /**
+     * Validate and activate the plugin
+     *
+     * @return void
+     */
+    public static function activate()
+    {
+        static::validatePlugin();
 
-	public static function deactivate()
-	{
-		// Framework specific implementation if necessary...
-		if (class_exists('GlueNamespace\App\Modules\Deactivator')) {
-			(new Deactivator)->handleDeactivation(static::$file);
-		}
-	}
+        if (class_exists('GlueNamespace\App\Modules\Activator')) {
+            (new Activator)->handleActivation(static::$file);
+        }
+    }
 
-	public static function validatePlugin()
-	{
-		if(!file_exists($glueJson = static::$basePath.'glue.json')) {
-	        die('The [glue.json] file is missing from "'.$basePath.'" directory.');
-	    }
+    /**
+     * Deactivate the plugin
+     *
+     * @return void
+     */
+    public static function deactivate()
+    {
+        // Framework specific implementation if necessary...
+        if (class_exists('GlueNamespace\App\Modules\Deactivator')) {
+            (new Deactivator)->handleDeactivation(static::$file);
+        }
+    }
 
-	    static::$config = json_decode(file_get_contents($glueJson), true);
+    /**
+     * Validate the plugin by checking all rquired files/settings
+     *
+     * @return void
+     */
+    public static function validatePlugin()
+    {
+        if (! file_exists($glueJson = static::$basePath.'glue.json')) {
+            die('The [glue.json] file is missing from "'.static::$basePath.'" directory.');
+        }
 
-		$configPath = static::$basePath.'config';
+        static::$config = json_decode(file_get_contents($glueJson), true);
 
-		if(!file_exists($file = $configPath.'/app.php')) {
-	        die('The [config.php] file is missing from "'.$configPath.'" directory.');
-	    }
+        $configPath = static::$basePath.'config';
 
-	    static::$config = array_merge(include $file, static::$config);
+        if (! file_exists($file = $configPath.'/app.php')) {
+            die('The [config.php] file is missing from "'.$configPath.'" directory.');
+        }
 
-	    if (!($autoload = @static::$config['autoload'])) {
-	        die('The [autoload] key is not specified or invalid in "'.$glueJson.'" file.');
-	    }
+        static::$config = array_merge(include $file, static::$config);
 
-	    if (!($namespace = @$autoload['namespace'])) {
-	        die('The [namespace] key is not specified or invalid in "'.$glueJson.'" file.');
-	    }
+        if (! ($autoload = @static::$config['autoload'])) {
+            die('The [autoload] key is not specified or invalid in "'.$glueJson.'" file.');
+        }
 
-	    $namespaceMapping = (array) @$autoload['mapping'];
+        if (! ($namespace = @$autoload['namespace'])) {
+            die('The [namespace] key is not specified or invalid in "'.$glueJson.'" file.');
+        }
 
-	    if (!$namespaceMapping) {
-	        die('The [mapping] key is not specified or invalid in "'.$glueJson.'" file.');
-	    }
-	}
+        $namespaceMapping = @$autoload['mapping'];
 
-	public static function registerAutoLoader()
-	{
-		if (!static::$config) {
-			static::$config = json_decode(file_get_contents(static::$basePath.'glue.json'), true);
-	    	static::$config = array_merge(include static::$basePath.'config/app.php', static::$config);
-		}
+        if (! ($namespaceMapping || empty((array) $namespaceMapping))) {
+            die('The [mapping] key is not specified or invalid in "'.$glueJson.'" file.');
+        }
+    }
 
-		spl_autoload_register([__CLASS__, 'loader']);
-	}
+    /**
+     * Register the autoloader
+     *
+     * @return void
+     */
+    public static function registerAutoLoader()
+    {
+        if (! static::$config) {
+            static::$config = json_decode(file_get_contents(static::$basePath.'glue.json'), true);
+            static::$config = array_merge(include static::$basePath.'config/app.php', static::$config);
+        }
 
-	public static function loader($class)
-	{
-		$namespace = static::$config['autoload']['namespace'];
+        spl_autoload_register([__CLASS__, 'loader']);
+    }
 
-		if(substr($class, 0, strlen($namespace)) !== $namespace) {
-			return false;
-		}
+    /**
+     * Framework's custom autoloader
+     *
+     * @param  string $class
+     *
+     * @return mixed
+     */
+    public static function loader($class)
+    {
+        $namespace = static::$config['autoload']['namespace'];
+
+        if (substr($class, 0, strlen($namespace)) !== $namespace) {
+            return false;
+        }
 
         foreach (static::$config['autoload']['mapping'] as $key => $value) {
-        	$className = str_replace(
-        		array('\\', $key, $namespace),
-        		array('/', $value, ''),
-        		$class
-        	);
+            $className = str_replace(
+                array('\\', $key, $namespace),
+                array('/', $value, ''),
+                $class
+            );
 
             $file = static::$basePath.trim($className, '/').'.php';
-            
-            if (is_readable($file)) {
-	            return include $file;
-	        }
-        }
-	}
 
-	public static function registerApplication()
-	{
-		add_action('plugins_loaded', function() {
-			return new Application(static::$file, static::$config);
-		});
-	}
+            if (is_readable($file)) {
+                return include $file;
+            }
+        }
+    }
+
+    /**
+     * Register "plugins_loaded" hook to run the plugin
+     *
+     * @return void
+     */
+    public static function registerApplication()
+    {
+        add_action('plugins_loaded', function () {
+            return new Application(static::$file, static::$config);
+        });
+    }
 }
