@@ -6,20 +6,19 @@ class AppProvider extends Provider
 {
     /**
      * The provider booting method to boot this provider
-     *
-     * @return void
      */
     public function booting()
     {
         $this->app->bind(
-            'app', $this->app, 'App', 'GlueNamespace\Framework\Foundation\Application'
+            'app',
+            $this->app,
+            'App',
+            'GlueNamespace\Framework\Foundation\Application'
         );
     }
 
     /**
      * The provider booted method to be called after booting
-     *
-     * @return void
      */
     public function booted()
     {

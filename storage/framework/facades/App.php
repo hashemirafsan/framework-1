@@ -6,5 +6,5 @@ use GlueNamespace\Framework\Foundation\AppFacade;
 
 class App extends AppFacade
 {
-	static $key = 'app';
+    public static $key = 'app';
 }

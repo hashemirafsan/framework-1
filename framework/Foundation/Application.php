@@ -11,7 +11,7 @@
 
 namespace GlueNamespace\Framework\Foundation;
 
-use  GlueNamespace\Framework\Exception\ExceptionHandler;
+use GlueNamespace\Framework\Exception\ExceptionHandler;
 
 class Application extends Container
 {
@@ -70,8 +70,8 @@ class Application extends Container
     /**
      * Init the application
      *
-     * @param string $baseFile (root plugin file path)
-     * @param array $appConfig (/config/app.php)
+     * @param string $baseFile  (root plugin file path)
+     * @param array  $appConfig (/config/app.php)
      */
     public function __construct($baseFile, $appConfig)
     {
@@ -83,10 +83,8 @@ class Application extends Container
     /**
      * Bootup the application
      *
-     * @param string $baseFile (root plugin file path)
-     * @param array $appConfig (/config/app.php)
-     *
-     * @return void
+     * @param string $baseFile  (root plugin file path)
+     * @param array  $appConfig (/config/app.php)
      */
     protected function bootstrapApplication()
     {
@@ -101,8 +99,6 @@ class Application extends Container
 
     /**
      * Register application base bindings
-     *
-     * @return  void
      */
     protected function setAppBaseBindings()
     {
@@ -113,8 +109,6 @@ class Application extends Container
 
     /**
      * Bind application instance
-     *
-     * @return  void
      */
     protected function bindAppInstance()
     {
@@ -123,8 +117,6 @@ class Application extends Container
 
     /**
      * Set Application paths
-     *
-     * @return void
      */
     protected function registerAppPaths()
     {
@@ -143,8 +135,6 @@ class Application extends Container
 
     /**
      * Set Application urls
-     *
-     * @return void
      */
     protected function registerAppUrls()
     {
@@ -157,8 +147,6 @@ class Application extends Container
 
     /**
      * Set Application Exception Handler
-     *
-     * @return void
      */
     protected function setExceptionHandler()
     {
@@ -175,7 +163,9 @@ class Application extends Container
     protected function loadApplicationTextDomain()
     {
         return load_plugin_textdomain(
-            $this->getTextDomain(), false, $this->languagePath()
+            $this->getTextDomain(),
+            false,
+            $this->languagePath()
         );
     }
 
@@ -183,8 +173,6 @@ class Application extends Container
      * Boot application with providers
      *
      * @param array $providers
-     *
-     * @return void
      */
     public function bootstrapWith(array $providers)
     {
@@ -195,7 +183,7 @@ class Application extends Container
             $instance->booting();
         }
 
-        if (! $this->isFacadeLoaderRegistered) {
+        if (!$this->isFacadeLoaderRegistered) {
             $this->registerAppFacadeLoader();
         }
 
@@ -241,9 +229,7 @@ class Application extends Container
     /**
      * Register booted events
      *
-     * @param  mixed $callback
-     *
-     * @return void
+     * @param mixed $callback
      */
     public function booted($callback)
     {
@@ -254,8 +240,6 @@ class Application extends Container
      * Register ready events
      *
      * @param mixed $callback
-     *
-     * @return void
      */
     public function ready($callback)
     {
@@ -266,8 +250,6 @@ class Application extends Container
      * Fire application event's handlers
      *
      * @param array $callbacks
-     *
-     * @return void
      */
     public function fireCallbacks(array $callbacks)
     {

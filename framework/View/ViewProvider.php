@@ -8,8 +8,6 @@ class ViewProvider extends Provider
 {
     /**
      * The provider booting method to boot this provider
-     *
-     * @return void
      */
     public function booting()
     {

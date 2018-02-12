@@ -10,22 +10,21 @@ class ConfigProvider extends Provider
 {
     /**
      * The provider booting method to boot this provider
-     *
-     * @return void
      */
     public function booting()
     {
         $config = new Config(['app' => $this->app->getAppConfig()]);
 
         $this->app->bindInstance(
-            'config', $config, 'Config', 'GlueNamespace\Framework\Config\Config'
+            'config',
+            $config,
+            'Config',
+            'GlueNamespace\Framework\Config\Config'
         );
     }
 
     /**
      * The provider booted method to be called after booting
-     *
-     * @return void
      */
     public function booted()
     {
@@ -34,18 +33,17 @@ class ConfigProvider extends Provider
 
     /**
      * Loads all configuration files from config directory
-     *
-     * @return void
      */
     public function loadConfig()
     {
         $configPath = $this->app->configPath();
         $itr = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
-            $configPath, RecursiveDirectoryIterator::SKIP_DOTS
+            $configPath,
+            RecursiveDirectoryIterator::SKIP_DOTS
         ));
 
         foreach ($itr as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) == "php" && $file->getFileName() != 'app.php') {
+            if (pathinfo($file, PATHINFO_EXTENSION) == 'php' && $file->getFileName() != 'app.php') {
                 $fileRealPath = $file->getRealPath();
                 $directory = $this->getDirectory($file, $configPath);
                 $this->app->config->set($directory.basename($fileRealPath, '.php'), include $fileRealPath);
@@ -56,7 +54,7 @@ class ConfigProvider extends Provider
     /**
      * Get nested directory names joined by a "."
      *
-     * @param string $file [A config file]
+     * @param string $file       [A config file]
      * @param string $configPath
      *
      * @return string

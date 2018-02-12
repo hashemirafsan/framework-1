@@ -15,8 +15,8 @@ class HookReference
      * construct the instance
      *
      * @param \GlueNamespace\Framework\Foundation\Application $app
-     * @param reference $ref
-     * @param string $key
+     * @param reference                                       $ref
+     * @param string                                          $key
      */
     public function __construct(Application $app, $ref, $key = null)
     {

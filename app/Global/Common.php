@@ -5,13 +5,13 @@
  * but try not to use any global functions unless you need.
  */
 
-if (! function_exists('dd')) {
+if (!function_exists('dd')) {
     function dd()
     {
         foreach (func_get_args() as $value) {
-            echo "<pre>";
+            echo '<pre>';
             print_r($value);
-            echo "</pre><br>";
+            echo '</pre><br>';
         }
         die;
     }

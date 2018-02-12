@@ -59,7 +59,7 @@ class Request
 
     public function get($key = null, $default = null)
     {
-        if (! $key) {
+        if (!$key) {
             return $this->request;
         } else {
             return isset($this->request[$key]) ? $this->request[$key] : $default;
@@ -101,7 +101,7 @@ class Request
         $values = [];
         $keys = is_array($args) ? $args : func_get_args();
         foreach ($this->request as $key => $value) {
-            if (! in_array($key, $keys)) {
+            if (!in_array($key, $keys)) {
                 $values[$key] = $this->request[$key];
             }
         }
@@ -121,9 +121,9 @@ class Request
      */
     public function getIp()
     {
-        if (! empty($_SERVER['HTTP_CLIENT_IP'])) {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $this->server('HTTP_CLIENT_IP');
-        } elseif (! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $this->server('HTTP_X_FORWARDED_FOR');
         } else {
             $ip = $this->server('REMOTE_ADDR');
@@ -139,7 +139,7 @@ class Request
 
     public function header($key = null)
     {
-        if (! $this->headers) {
+        if (!$this->headers) {
             $this->headers = $this->setHeaders();
         }
 
