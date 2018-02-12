@@ -31,7 +31,7 @@ trait FileHandler
      */
     protected function convertFileInformation($file)
     {
-        $fileKeys = array('error', 'name', 'size', 'tmp_name', 'type');
+        $fileKeys = ['error', 'name', 'size', 'tmp_name', 'type'];
 
         if ($file instanceof File) {
             return $file;
@@ -50,7 +50,7 @@ trait FileHandler
                     $file = new File($file['tmp_name'], $file['name'], $file['type'], $file['size'], $file['error']);
                 }
             } else {
-                $file = array_map(array($this, 'convertFileInformation'), $file);
+                $file = array_map([$this, 'convertFileInformation'], $file);
                 if (array_keys($keys) === $keys) {
                     $file = array_filter($file);
                 }
@@ -78,16 +78,16 @@ trait FileHandler
      */
     protected function fixPhpFilesArray($data)
     {
-        $fileKeys = array('error', 'name', 'size', 'tmp_name', 'type');
+        $fileKeys = ['error', 'name', 'size', 'tmp_name', 'type'];
 
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             return $data;
         }
 
         $keys = array_keys($data);
         sort($keys);
 
-        if ($fileKeys != $keys || ! isset($data['name']) || ! is_array($data['name'])) {
+        if ($fileKeys != $keys || !isset($data['name']) || !is_array($data['name'])) {
             return $data;
         }
 
@@ -97,13 +97,13 @@ trait FileHandler
         }
 
         foreach ($data['name'] as $key => $name) {
-            $files[$key] = $this->fixPhpFilesArray(array(
+            $files[$key] = $this->fixPhpFilesArray([
                 'error'    => $data['error'][$key],
                 'name'     => $name,
                 'type'     => $data['type'][$key],
                 'tmp_name' => $data['tmp_name'][$key],
                 'size'     => $data['size'][$key],
-            ));
+            ]);
         }
 
         return $files;

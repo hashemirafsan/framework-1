@@ -6,8 +6,6 @@ trait FacadeLoaderTrait
 {
     /**
      * Register facade/alias loader
-     *
-     * @return void
      */
     protected function registerAppFacadeLoader()
     {
@@ -19,9 +17,9 @@ trait FacadeLoaderTrait
     /**
      * Facad/Alias loader
      *
-     * @param  [type] $class [description]
+     * @param [type] $class [description]
      *
-     * @return [type]        [description]
+     * @return [type] [description]
      */
     protected function aliasLoader($class)
     {
@@ -33,8 +31,8 @@ trait FacadeLoaderTrait
                 if (array_key_exists($parts[1], static::$container['facades'])) {
                     $containerKey = static::$container['facades'][$facade = $parts[1]];
                     $path = $this->storagePath().'framework/facades/';
-                    if (! file_exists($file = $path.$facade.'.php')) {
-                        if (! file_exists($path)) {
+                    if (!file_exists($file = $path.$facade.'.php')) {
+                        if (!file_exists($path)) {
                             mkdir($path, 0777, true);
                         }
                         file_put_contents($file, $this->getFileData($facade, $containerKey));

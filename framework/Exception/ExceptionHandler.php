@@ -46,9 +46,13 @@ class ExceptionHandler
 
     public function handleShutdown()
     {
-        if (! is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
+        if (!is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
             $this->handleException(new \ErrorException(
-                $error['message'], 0, $error['type'], $error['file'], $error['line']
+                $error['message'],
+                0,
+                $error['type'],
+                $error['file'],
+                $error['line']
             ));
         }
     }
@@ -56,7 +60,7 @@ class ExceptionHandler
     public function report($e)
     {
         $logDir = $this->app->storagePath('logs');
-        if (! is_readable($logDir)) {
+        if (!is_readable($logDir)) {
             mkdir($logDir, 0777);
         }
 

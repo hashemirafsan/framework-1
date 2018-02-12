@@ -20,7 +20,7 @@ trait SetGetAttributesTrait
      * Dynamic setter for application
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function __set($key, $value)
     {
@@ -108,9 +108,9 @@ trait SetGetAttributesTrait
      */
     public function getTextDomain()
     {
-        return $this->appConfig['plugin_text_domain']
-            ? $this->appConfig['plugin_text_domain']
-            : $this->appConfig['plugin_slug'];
+        return $this->appConfig['plugin_text_domain'] ?
+               $this->appConfig['plugin_text_domain'] :
+               $this->appConfig['plugin_slug'];
     }
 
     /**

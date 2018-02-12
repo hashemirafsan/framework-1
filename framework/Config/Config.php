@@ -11,14 +11,14 @@ class Config implements \ArrayAccess
      *
      * @var array
      */
-    protected $repository = array();
+    protected $repository = [];
 
     /**
      * Initiate the instance
      *
      * @param array $repository
      */
-    public function __construct($repository = array())
+    public function __construct($repository = [])
     {
         $this->repository = $repository;
     }
@@ -49,7 +49,7 @@ class Config implements \ArrayAccess
      * Get the specified configuration value.
      *
      * @param array|string $key
-     * @param mixed $default
+     * @param mixed        $default
      *
      * @return mixed
      */
@@ -62,9 +62,7 @@ class Config implements \ArrayAccess
      * Set a given configuration value.
      *
      * @param array|string $key
-     * @param mixed $value
-     *
-     * @return void
+     * @param mixed        $value
      */
     public function set($key, $value)
     {
@@ -91,13 +89,11 @@ class Config implements \ArrayAccess
      * Dynamic Setter
      *
      * @param string $key
-     * @param mixed $key
-     *
-     * @return void
+     * @param mixed  $key
      */
     public function __set($key, $value)
     {
-        return $this->set($key, $value);
+        $this->set($key, $value);
     }
 
     /**
@@ -128,9 +124,7 @@ class Config implements \ArrayAccess
      * Set an item.
      *
      * @param string $key
-     * @param mixed $value
-     *
-     * @return void
+     * @param mixed  $value
      */
     public function offsetSet($key, $value)
     {
@@ -141,8 +135,6 @@ class Config implements \ArrayAccess
      * Unset an item.
      *
      * @param string $key
-     *
-     * @return void
      */
     public function offsetUnset($key)
     {

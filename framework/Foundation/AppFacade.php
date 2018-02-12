@@ -2,14 +2,14 @@
 
 namespace GlueNamespace\Framework\Foundation;
 
-Abstract class AppFacade
+abstract class AppFacade
 {
     /**
      * $instance Application
      *
      * @var \GlueNamespace\Framework\Foundation\Application
      */
-    static $instance = null;
+    public static $instance = null;
 
     /**
      * Sets the app instance from Application

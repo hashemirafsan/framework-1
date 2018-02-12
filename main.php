@@ -12,7 +12,7 @@ Text Domain: [Text Domain]
 Domain Path: /resources/languages
 */
 
-include "framework/Foundation/Bootstrap.php";
+include 'framework/Foundation/Bootstrap.php';
 
 use GlueNamespace\Framework\Foundation\Bootstrap;
 
