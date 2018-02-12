@@ -31,6 +31,11 @@ class Request
         );
     }
 
+    /**
+     * Clean the $_GET/$_POST/$_FILES
+     * @param  $this->request
+     * @return mixed
+     */
     public function clean($request)
     {
         $clean = [];
@@ -41,22 +46,43 @@ class Request
         return $clean;
     }
 
+    /**
+     * Trim & stripslashes an item during cleaning process of request
+     * @param  mixed
+     * @return mixed
+     */
     public function trimAndStrip($value)
     {
         return trim(stripslashes($value));
     }
 
+    /**
+     * Set an item into $this->request
+     * @param  string
+     * @param  mixed
+     * @return $this
+     */
     public function set($key, $value)
     {
         $this->request[$key] = $value;
         return $this;
     }
 
+    /**
+     * Get all items from request
+     * @return array
+     */
     public function all()
     {
         return $this->get();
     }
 
+    /**
+     * Get an item from $this->request ($_GET/$_POST/$_FILES) array
+     * @param  string|null
+     * @param  mixed
+     * @return mixed
+     */
     public function get($key = null, $default = null)
     {
         if (!$key) {
@@ -76,16 +102,31 @@ class Request
         return $this->files;
     }
 
+    /**
+     * Get an item from cleaned $_GET array
+     * @param  string|null
+     * @return array
+     */
     public function query($key = null)
     {
         return $key ? $this->get[$key] : $this->get;
     }
 
+    /**
+     * Get an item from cleaned $_POST array
+     * @param  string|null
+     * @return array
+     */
     public function post($key = null)
     {
         return $key ? $this->post[$key] : $this->post;
     }
 
+    /**
+     * Return only items from request given in $args
+     * @param  array $args
+     * @return array
+     */
     public function only($args)
     {
         $values = [];
@@ -96,6 +137,11 @@ class Request
         return $values;
     }
 
+    /**
+     * Return all items from request except the $args
+     * @param  array $args
+     * @return array
+     */
     public function except($args)
     {
         $values = [];
@@ -108,6 +154,11 @@ class Request
         return $values;
     }
 
+    /**
+     * Merge new items into current request array
+     * @param  array $data
+     * @return $this
+     */
     public function merge(array $data = [])
     {
         $this->request = array_merge($this->request, $data);
@@ -132,11 +183,21 @@ class Request
         return $ip;
     }
 
+    /**
+     * Get an item from $this->server/$_SERVER
+     * @param  string $key
+     * @return mixed
+     */
     public function server($key = null)
     {
         return $key ? $this->server[$key] : $this->server;
     }
 
+    /**
+     * Get an item from $this->headers/$_SERVER
+     * @param  string $key
+     * @return mixed
+     */
     public function header($key = null)
     {
         if (!$this->headers) {
@@ -146,13 +207,18 @@ class Request
         return $key ? $this->headers[$key] : $this->headers;
     }
 
+    /**
+     * Get a cookie from $_COOKIE
+     * @param  string $key
+     * @return mixed
+     */
     public function cookie($key = null)
     {
         return $key ? $this->cookie[$key] : $this->cookie;
     }
 
     /**
-     * Taken and modified from Symfony
+     * Set Headers (Taken and modified from Symfony)
      */
     public function setHeaders()
     {
